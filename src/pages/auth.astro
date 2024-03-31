@@ -1,0 +1,67 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Money Moon | Authenticate">
+  <div class="login-card px-32 py-16 inline-block rounded-2xl">
+    <div>
+      <div class="flex gap-8">
+        <img src="/logo.svg" alt="Money Moon logo image" />
+        <h1 class="font-bold font-display text-[64px] text-black">
+          Money Moon
+        </h1>
+      </div>
+      <h2 class="font-light font-body text-4xl text-black text-center">
+        Welcome Back!
+      </h2>
+    </div>
+    <form>
+      <div class="my-14">
+        <input type="email" placeholder="Email" required class="w-full mb-6" />
+        <input type="password" placeholder="Password" required class="w-full" />
+      </div>
+      <button type="submit" class="w-full">Login</button>
+    </form>
+    <div class="flex justify-center">
+      <p>Don’t have an account yet?</p>
+      <button type="button" class="font-bold">Sign up</button>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  body {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(
+      to right,
+      rgba(255, 226, 89, 1) 0%,
+      rgba(255, 225, 89, 1) 4.7%,
+      rgba(255, 225, 89, 1) 8.9%,
+      rgba(255, 224, 89, 1) 12.8%,
+      rgba(255, 223, 89, 1) 16.56%,
+      rgba(255, 222, 88, 1) 20.37%,
+      rgba(255, 220, 88, 1) 24.4%,
+      rgba(255, 219, 88, 1) 28.83%,
+      rgba(255, 217, 88, 1) 33.84%,
+      rgba(255, 215, 88, 1) 39.6%,
+      rgba(255, 213, 87, 1) 46.3%,
+      rgba(255, 210, 87, 1) 54.1%,
+      rgba(255, 207, 87, 1) 63.2%,
+      rgba(255, 203, 86, 1) 73.76%,
+      rgba(255, 199, 86, 1) 85.97%,
+      rgba(255, 195, 85, 1) 100%
+    );
+  }
+
+  .login-card {
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0.4),
+      rgba(255, 255, 255, 0.2)
+    );
+  }
+</style>
