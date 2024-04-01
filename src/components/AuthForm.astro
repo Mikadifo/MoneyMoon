@@ -12,12 +12,14 @@ const { login } = Astro.props;
       Welcome{login && " Back"}!
     </h2>
   </div>
-  <form>
+  <form method="POST">
     <div class="my-14">
       <input
         type="email"
         placeholder="Email"
+        name="email"
         required
+        id="email-field"
         class="w-full mb-6 py-3 px-6 rounded-lg bg-transparent border border-black placeholder:text-black/75 text-black text-xl font-body"
       />
       {
@@ -25,7 +27,9 @@ const { login } = Astro.props;
           <input
             type="text"
             placeholder="Username"
+            name="username"
             required
+            id="username-field"
             class="w-full mb-6 py-3 px-6 rounded-lg bg-transparent border border-black placeholder:text-black/75 text-black text-xl font-body"
           />
         )
@@ -33,12 +37,15 @@ const { login } = Astro.props;
       <input
         type="password"
         placeholder="Password"
+        name="password"
         required
+        id="password-field"
         class="w-full py-3 px-6 rounded-lg bg-transparent border border-black placeholder:text-black/75 text-black text-xl font-body"
       />
     </div>
     <button
       type="submit"
+      id={login ? "login-button" : "register-button"}
       class="w-full py-2 bg-main rounded-lg font-bold font-display text-[26px] text-white"
       >{login ? "Login" : "Register"}</button
     >

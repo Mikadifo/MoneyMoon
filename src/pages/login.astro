@@ -1,7 +1,27 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import AuthForm from "../components/AuthForm.astro";
+import { loginUser } from "./../controllers/userController";
+
 import "./../styles/auth.css";
+
+console.log(Astro.request.method);
+if (Astro.request.method === "POST") {
+  try {
+    const data = await Astro.request.formData();
+    const email = data.get("email") as string;
+    const password = data.get("password") as string;
+    let response;
+    response = await loginUser(email, password);
+    if (response.message === "success") {
+      return Astro.redirect("/");
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message, "ERROR");
+    }
+  }
+}
 ---
 
 <Layout title="Money Moon | Login">
