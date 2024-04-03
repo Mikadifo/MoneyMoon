@@ -15,11 +15,12 @@ if (Astro.request.method === "POST") {
     const email = data.get("email") as string;
     const password = data.get("password") as string;
     let response = await loginUser(email, password);
+
     if (response.message === "success") {
       Astro.cookies.set("token", response.data.token, {
         maxAge: MONTH_IN_MILLISECONDS,
       });
-      return Astro.redirect("/");
+      return Astro.redirect("/dashboard");
     }
   } catch (error) {
     if (error instanceof Error) {

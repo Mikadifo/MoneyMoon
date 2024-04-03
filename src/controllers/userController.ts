@@ -7,8 +7,8 @@ export const loginUser = async (email: string, password: string) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      email: email,
-      password: password,
+      email,
+      password,
     }),
   });
   response = await response.json();
@@ -19,10 +19,26 @@ export const loginUser = async (email: string, password: string) => {
   return response;
 };
 
-export const registerUser = (
+export const registerUser = async (
   email: string,
   username: string,
   password: string
-) => {
-  console.log("Register");
+): Promise<Response> => {
+  let response = await fetch(`${BASE_URL}/signup`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email,
+      username,
+      password,
+    }),
+  });
+  response = await response.json();
+  if (response.message === "error") {
+    console.error(response.data);
+  }
+
+  return response;
 };
