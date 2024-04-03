@@ -1,10 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import AuthForm from "../components/AuthForm.astro";
-import { $token } from "../stores/auth";
 import "./../styles/auth.css";
 
-if ($token.get()) {
+const token = Astro.cookies.get("token")?.value;
+
+if (token) {
   return Astro.redirect("/");
 }
 ---

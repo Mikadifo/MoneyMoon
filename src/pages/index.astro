@@ -1,8 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { $token } from "../stores/auth";
 
-if (!$token.get()) {
+const token = Astro.cookies.get("token")?.value;
+
+if (!token) {
   return Astro.redirect("/login");
 }
 ---

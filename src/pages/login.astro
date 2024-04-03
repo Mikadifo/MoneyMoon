@@ -2,10 +2,11 @@
 import Layout from "../layouts/Layout.astro";
 import AuthForm from "../components/AuthForm.astro";
 import { loginUser } from "./../controllers/userController";
-import { $token } from "../stores/auth";
 import "./../styles/auth.css";
 
-if ($token.get()) {
+const token = Astro.cookies.get("token")?.value;
+
+if (token) {
   return Astro.redirect("/");
 }
 
@@ -16,7 +17,7 @@ if (Astro.request.method === "POST") {
     const password = data.get("password") as string;
     let response = await loginUser(email, password);
     if (response.message === "success") {
-      $token.set(response.data.token);
+      Astro.cookies.set("token", response.data.token);
       return Astro.redirect("/");
     }
   } catch (error) {
