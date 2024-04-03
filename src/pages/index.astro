@@ -1,5 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { $token } from "../stores/auth";
+
+if (!$token.get()) {
+  return Astro.redirect("/login");
+}
 ---
 
-<Layout title="Welcome to Money Moon!">hola</Layout>
+<Layout title="Welcome to Money Moon!">
+  <div>Welcome user</div>
+</Layout>

@@ -8,7 +8,7 @@ export const loginUser = async (email: string, password: string) => {
     },
     body: JSON.stringify({
       email: email,
-      password: password, //TODO: encrypt before sending
+      password: password,
     }),
   });
   response = await response.json();
