@@ -4,7 +4,7 @@ import AuthForm from "../components/AuthForm.astro";
 import "./../styles/auth.css";
 
 if (Astro.cookies.has("token")) {
-  return Astro.redirect("/");
+  return Astro.redirect("/dashboard");
 }
 ---
 

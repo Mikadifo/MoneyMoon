@@ -1,0 +1,13 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+if (!Astro.cookies.has("token")) {
+  return Astro.redirect("/login");
+}
+---
+
+<Layout title="Dashboard | Money moon">
+  <div>
+    <h1>WENAS</h1>
+  </div>
+</Layout>

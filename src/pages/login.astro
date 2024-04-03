@@ -6,7 +6,7 @@ import { MONTH_IN_MILLISECONDS } from "../constants/constants";
 import "./../styles/auth.css";
 
 if (Astro.cookies.has("token")) {
-  return Astro.redirect("/");
+  return Astro.redirect("/dashboard");
 }
 
 if (Astro.request.method === "POST") {
