@@ -1,12 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import AuthForm from "../components/AuthForm.astro";
-import { loginUser } from "./../controllers/userController";
+import { loginUser } from "../controllers/userController";
+import { MONTH_IN_MILLISECONDS } from "../constants/constants";
 import "./../styles/auth.css";
 
-const token = Astro.cookies.get("token")?.value;
-
-if (token) {
+if (Astro.cookies.has("token")) {
   return Astro.redirect("/");
 }
 
@@ -17,7 +16,9 @@ if (Astro.request.method === "POST") {
     const password = data.get("password") as string;
     let response = await loginUser(email, password);
     if (response.message === "success") {
-      Astro.cookies.set("token", response.data.token);
+      Astro.cookies.set("token", response.data.token, {
+        maxAge: MONTH_IN_MILLISECONDS,
+      });
       return Astro.redirect("/");
     }
   } catch (error) {
