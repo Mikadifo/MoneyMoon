@@ -1,0 +1,21 @@
+---
+let homeNavigation = "/";
+
+if (Astro.cookies.has("token")) {
+  homeNavigation = "/dashboard";
+}
+---
+
+<header class="px-16 py-4 border-b border-secondary bg-white">
+  <nav class="flex justify-between items-center">
+    <a href={homeNavigation} class="flex items-center gap-2">
+      <img src="/logo.svg" alt="Money Moon Logo" class="w-10" />
+      <h1 class="text-black text-4xl font-display font-bold">Money Moon</h1>
+    </a>
+    <ul class="flex gap-4 text-black">
+      <li><a href="#">Link 1</a></li>
+      <li><a href="#">Link 2</a></li>
+      <li><a href="#">Link 3</a></li>
+    </ul>
+  </nav>
+</header>
