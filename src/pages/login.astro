@@ -1,9 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import AuthForm from "../components/AuthForm.astro";
-import { loginUser } from "../controllers/userController";
+import { loginUser, type DefaultResponse } from "../controllers/userController";
 import { MONTH_IN_MILLISECONDS } from "../constants/constants";
 import "./../styles/auth.css";
+
+let error: string = "";
 
 if (Astro.cookies.has("token")) {
   return Astro.redirect("/dashboard");
@@ -14,10 +16,16 @@ if (Astro.request.method === "POST") {
     const data = await Astro.request.formData();
     const email = data.get("email") as string;
     const password = data.get("password") as string;
-    let response = await loginUser(email, password);
+    const response = await loginUser(email, password);
+    const decoded = (await response.json()) as DefaultResponse;
 
-    if (response.message === "success") {
-      Astro.cookies.set("token", response.data.token, {
+    if (decoded.message === "error") {
+      console.error(decoded.data);
+      error = decoded.data;
+    }
+
+    if (decoded.message === "success") {
+      Astro.cookies.set("token", decoded.data.token, {
         maxAge: MONTH_IN_MILLISECONDS,
       });
       return Astro.redirect("/dashboard");
@@ -31,5 +39,5 @@ if (Astro.request.method === "POST") {
 ---
 
 <Layout title="Money Moon | Login">
-  <AuthForm login={true} />
+  <AuthForm login={true} error={error} />
 </Layout>

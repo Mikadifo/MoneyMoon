@@ -1,9 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import AuthForm from "../components/AuthForm.astro";
-import { registerUser } from "../controllers/userController";
+import {
+  registerUser,
+  type DefaultResponse,
+} from "../controllers/userController";
 import { MONTH_IN_MILLISECONDS } from "../constants/constants";
 import "./../styles/auth.css";
+
+let error: string = "";
 
 if (Astro.cookies.has("token")) {
   return Astro.redirect("/dashboard");
@@ -15,10 +20,16 @@ if (Astro.request.method === "POST") {
     const email = data.get("email") as string;
     const username = data.get("username") as string;
     const password = data.get("password") as string;
-    let response = await registerUser(email, username, password);
+    const response = await registerUser(email, username, password);
+    const decoded = (await response.json()) as DefaultResponse;
 
-    if (response.message === "success") {
-      Astro.cookies.set("token", response.data.token, {
+    if (decoded.message === "error") {
+      console.error(decoded.data);
+      error = decoded.data;
+    }
+
+    if (decoded.message === "success") {
+      Astro.cookies.set("token", decoded.data.token, {
         maxAge: MONTH_IN_MILLISECONDS,
       });
       return Astro.redirect("/dashboard");
@@ -32,5 +43,5 @@ if (Astro.request.method === "POST") {
 ---
 
 <Layout title="Money Moon | Register">
-  <AuthForm login={false} />
+  <AuthForm login={false} error={error} />
 </Layout>

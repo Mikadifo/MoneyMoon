@@ -1,7 +1,16 @@
 const BASE_URL = (await import.meta.env.PUBLIC_API_URL) as string;
 
-export const loginUser = async (email: string, password: string) => {
-  let response = await fetch(`${BASE_URL}/login`, {
+export interface DefaultResponse {
+  status: number;
+  message: string;
+  data: any;
+}
+
+export const loginUser = (
+  email: string,
+  password: string
+): Promise<Response> => {
+  return fetch(`${BASE_URL}/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -11,20 +20,14 @@ export const loginUser = async (email: string, password: string) => {
       password,
     }),
   });
-  response = await response.json();
-  if (response.message === "error") {
-    console.error(response.data);
-  }
-
-  return response;
 };
 
-export const registerUser = async (
+export const registerUser = (
   email: string,
   username: string,
   password: string
 ): Promise<Response> => {
-  let response = await fetch(`${BASE_URL}/signup`, {
+  return fetch(`${BASE_URL}/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -35,10 +38,4 @@ export const registerUser = async (
       password,
     }),
   });
-  response = await response.json();
-  if (response.message === "error") {
-    console.error(response.data);
-  }
-
-  return response;
 };

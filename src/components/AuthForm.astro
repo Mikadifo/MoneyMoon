@@ -1,8 +1,11 @@
 ---
 export interface Props {
   login: boolean;
+  error: string;
 }
-const { login } = Astro.props;
+
+const { login, error } = Astro.props;
+//TODO: user error to show login/register errors either as toasts or a paragraph in red
 ---
 
 <div class="login-card px-32 py-16 inline-block rounded-2xl">
