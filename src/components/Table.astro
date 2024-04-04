@@ -1,0 +1,58 @@
+---
+export interface Props {
+  data: any[];
+}
+
+const HEAD_ELEMENTS = [
+  "ID",
+  "Date",
+  "Type",
+  "Description",
+  "Amount",
+  "Balance",
+];
+
+const { data } = Astro.props;
+---
+
+<div class="rounded-2xl bg-[#fff] px-8 py-4">
+  <table class="text-left text-black">
+    <thead class="font-bold font-display text-xl uppercase">
+      <tr>
+        {
+          HEAD_ELEMENTS.map((element) => (
+            <th scope="col" class="px-8 py-4">
+              {element}
+            </th>
+          ))
+        }
+      </tr>
+    </thead>
+    <tbody class="font-body text-xl">
+      {
+        data.map((row) => (
+          <tr>
+            <td scope="row" class="px-8 py-4 whitespace-nowrap">
+              {row.id}
+            </td>
+            <td scope="row" class="px-8 py-4 whitespace-nowrap">
+              {row.date}
+            </td>
+            <td scope="row" class="px-8 py-4 whitespace-nowrap">
+              {row.type}
+            </td>
+            <td scope="row" class="px-8 py-4 whitespace-nowrap">
+              {row.description}
+            </td>
+            <td scope="row" class="px-8 py-4 whitespace-nowrap">
+              $ {row.amount}
+            </td>
+            <td scope="row" class="px-8 py-4 whitespace-nowrap">
+              $ {row.balance}
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>

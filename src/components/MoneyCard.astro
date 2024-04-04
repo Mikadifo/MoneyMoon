@@ -1,0 +1,19 @@
+---
+interface Props {
+  amount: number;
+  label: string;
+}
+
+const { amount, label } = Astro.props;
+---
+
+<div class="bg-black text-white rounded-2xl inline-block">
+  <div class="flex flex-col px-16 py-8 items-center">
+    <span class="font-display font-bold text-4xl mb-4">
+      $ {amount}
+    </span>
+    <span class="font-body text-xl">
+      {label}
+    </span>
+  </div>
+</div>

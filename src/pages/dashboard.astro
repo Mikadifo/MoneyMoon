@@ -1,13 +1,40 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import MoneyCard from "../components/MoneyCard.astro";
+import Table from "../components/Table.astro";
 
 if (!Astro.cookies.has("token")) {
   return Astro.redirect("/login");
 }
+
+//TODO: get from user
+const dummyData = [
+  {
+    id: "423",
+    date: "21/02/2023",
+    type: "Debit",
+    description: "MTA - NY transit fare 110th st",
+    amount: -2.9,
+    balance: 3034.09,
+  },
+  {
+    id: "424",
+    date: "20/02/2023",
+    type: "Debit",
+    description: "MTA - NY transit fare 110th st",
+    amount: -2.9,
+    balance: 3036.99,
+  },
+];
 ---
 
 <Layout title="Dashboard | Money moon">
-  <div>
-    <h1>WENAS</h1>
+  <div class="flex flex-col items-center gap-16">
+    <div class="flex gap-8 justify-center">
+      <MoneyCard amount={3034.09} label="Capital One Balance" />
+      <MoneyCard amount={822.34} label="Savings" />
+      <MoneyCard amount={1340.45} label="Mika Pc" />
+    </div>
+    <Table data={dummyData} />
   </div>
 </Layout>
