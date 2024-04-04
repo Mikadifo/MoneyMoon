@@ -1,8 +1,10 @@
 ---
 let homeNavigation = "/";
+let isLoggedIn = false;
 
 if (Astro.cookies.has("token")) {
   homeNavigation = "/dashboard";
+  isLoggedIn = true;
 }
 ---
 
@@ -12,10 +14,30 @@ if (Astro.cookies.has("token")) {
       <img src="/logo.svg" alt="Money Moon Logo" class="w-10" />
       <h1 class="text-black text-4xl font-display font-bold">Money Moon</h1>
     </a>
-    <ul class="flex gap-4 text-black">
-      <li><a href="#">Link 1</a></li>
-      <li><a href="#">Link 2</a></li>
-      <li><a href="#">Link 3</a></li>
+    <ul class="flex gap-4 text-black font-body">
+      {
+        isLoggedIn ? (
+          <>
+            <li>
+              <span class="font-display font-bold">Bank</span>: Capital One
+            </li>
+            <li>
+              <a href="/logout" class="font-display font-bold hover:underline">
+                Sign out
+              </a>
+            </li>
+          </>
+        ) : (
+          <>
+            <li>
+              <a href="/login">Login</a>
+            </li>
+            <li>
+              <a href="/register">Sign Up</a>
+            </li>
+          </>
+        )
+      }
     </ul>
   </nav>
 </header>

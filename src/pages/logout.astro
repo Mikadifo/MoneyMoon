@@ -1,0 +1,7 @@
+---
+if (Astro.cookies.has("token")) {
+  Astro.cookies.delete("token");
+}
+
+return Astro.redirect("/login");
+---
