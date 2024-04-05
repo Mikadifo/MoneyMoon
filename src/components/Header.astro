@@ -12,7 +12,7 @@ if (Astro.cookies.has("token")) {
   isLoggedIn = true;
 }
 
-const { banks, isHome = false } = Astro.props;
+let { banks, isHome = false } = Astro.props;
 ---
 
 <header class="px-16 py-4 border-b border-secondary bg-white">
@@ -26,11 +26,11 @@ const { banks, isHome = false } = Astro.props;
         isLoggedIn ? (
           <>
             <li>
-              {banks && (
+		{banks && (
               <label for="banks" class="font-display font-bold">
                 Bank:
               </label>
-                <select id="banks">
+                <select id="banks" class="bg-transparent">
                   {banks.map((bank) => (
                     <option value={bank.id}>{bank.name}</option>
                   ))}

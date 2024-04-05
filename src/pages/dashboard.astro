@@ -4,6 +4,8 @@ import MoneyCard from "../components/MoneyCard.astro";
 import Table from "../components/Table.astro";
 import Header from "../components/Header.astro";
 import type { Bank } from "../models/bank";
+import type { Transaction } from "../models/transaction";
+import { getUserTransactions } from "../controllers/transactionController";
 import {
   getUserBanks,
   type DefaultResponse,
@@ -13,27 +15,8 @@ if (!Astro.cookies.has("token")) {
   return Astro.redirect("/login");
 }
 
-//TODO: get from user
-const dummyData = [
-  {
-    id: "423",
-    date: "21/02/2023",
-    type: "Debit",
-    description: "MTA - NY transit fare 110th st",
-    amount: -2.9,
-    balance: 3034.09,
-  },
-  {
-    id: "424",
-    date: "20/02/2023",
-    type: "Debit",
-    description: "MTA - NY transit fare 110th st",
-    amount: -2.9,
-    balance: 3036.99,
-  },
-];
-
 let banks: Bank[] = [];
+let transactions: Transaction[] = [];
 let error: string = "";
 
 try {
@@ -42,7 +25,6 @@ try {
   const decoded = (await response.json()) as DefaultResponse;
 
   if (decoded.status === 401) {
-    console.log("DELTE TOKEN");
     return Astro.redirect("/logout");
   }
 
@@ -53,6 +35,24 @@ try {
 
   if (decoded.message === "success") {
     banks = decoded.data;
+  }
+
+  const bankId = banks[0].id; //User will only have 1 bank for now
+  const transactionsResponse = await getUserTransactions(token || "", bankId);
+  const transactionsDecoded =
+    (await transactionsResponse.json()) as DefaultResponse;
+
+  if (transactionsDecoded.status === 401) {
+    return Astro.redirect("/logout");
+  }
+
+  if (transactionsDecoded.message === "error") {
+    console.error(transactionsDecoded.data);
+    error = transactionsDecoded.data;
+  }
+
+  if (transactionsDecoded.message === "success") {
+    transactions = transactionsDecoded.data;
   }
 } catch (error) {
   if (error instanceof Error) {
@@ -69,6 +69,6 @@ try {
       <MoneyCard amount={822.34} label="Savings" />
       <MoneyCard amount={1340.45} label="Mika Pc" />
     </div>
-    <Table data={dummyData} />
+    <Table data={transactions} />
   </div>
 </Layout>
