@@ -34,7 +34,10 @@ const { data } = Astro.props;
             <td scope="row" class="px-8 py-4 whitespace-nowrap">
               {row.description}
             </td>
-            <td scope="row" class="px-8 py-4 whitespace-nowrap">
+            <td
+              scope="row"
+              class={`px-8 py-4 whitespace-nowrap ${row.amount > 0 ? "text-success" : "text-error"}`}
+            >
               $ {row.amount}
             </td>
             <td scope="row" class="px-8 py-4 whitespace-nowrap">
