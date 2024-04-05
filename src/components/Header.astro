@@ -25,6 +25,20 @@ let { banks, isHome = false } = Astro.props;
       {
         isLoggedIn ? (
           <>
+	    {isHome ? (
+            <li>
+              <a href="/dashboard" class="font-display font-bold hover:underline">
+                Dashboard
+              </a>
+            </li>
+	    ) : (
+            <li>
+		<button id="csv-button" class="font-display font-bold px-4 bg-main rounded-lg text-white hover:opacity-80"
+		    >
+                Upload CSV
+              </button>
+            </li>
+	    )}
             <li>
 		{banks && (
               <label for="banks" class="font-display font-bold">
@@ -37,19 +51,11 @@ let { banks, isHome = false } = Astro.props;
                 </select>
               )}
             </li>
-	    {isHome ? (
-            <li>
-              <a href="/dashboard" class="font-display font-bold hover:underline">
-                Dashboard
-              </a>
-            </li>
-	    ) : (
             <li>
               <a href="/logout" class="font-display font-bold hover:underline">
                 Sign out
               </a>
             </li>
-	    )}
           </>
         ) : (
           <>
