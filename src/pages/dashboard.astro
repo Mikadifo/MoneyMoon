@@ -2,6 +2,12 @@
 import Layout from "../layouts/Layout.astro";
 import MoneyCard from "../components/MoneyCard.astro";
 import Table from "../components/Table.astro";
+import Header from "../components/Header.astro";
+import type { Bank } from "../models/bank";
+import {
+  getUserBanks,
+  type DefaultResponse,
+} from "../controllers/userController";
 
 if (!Astro.cookies.has("token")) {
   return Astro.redirect("/login");
@@ -26,9 +32,37 @@ const dummyData = [
     balance: 3036.99,
   },
 ];
+
+let banks: Bank[] = [];
+let error: string = "";
+
+try {
+  const token = Astro.cookies.get("token")?.value;
+  const response = await getUserBanks(token || "");
+  const decoded = (await response.json()) as DefaultResponse;
+
+  if (decoded.status === 401) {
+    console.log("DELTE TOKEN");
+    return Astro.redirect("/logout");
+  }
+
+  if (decoded.message === "error") {
+    console.error(decoded.data);
+    error = decoded.data;
+  }
+
+  if (decoded.message === "success") {
+    banks = decoded.data;
+  }
+} catch (error) {
+  if (error instanceof Error) {
+    console.error(error.message, "ERROR");
+  }
+}
 ---
 
 <Layout title="Dashboard | Money moon">
+  <Header banks={banks} />
   <div class="flex flex-col items-center gap-16">
     <div class="flex gap-8 justify-center">
       <MoneyCard amount={3034.09} label="Capital One Balance" />

@@ -1,12 +1,9 @@
 ---
-import Header from "../components/Header.astro";
-
 interface Props {
   title: string;
-  navbar?: boolean;
 }
 
-const { title = "Mooney Moon", navbar = true } = Astro.props;
+const { title = "Mooney Moon" } = Astro.props;
 ---
 
 <!doctype html>
@@ -22,9 +19,6 @@ const { title = "Mooney Moon", navbar = true } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <>
-    {navbar && <Header />}
-  </>
   <body>
     <slot />
   </body>

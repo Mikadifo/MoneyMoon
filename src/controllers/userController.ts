@@ -39,3 +39,13 @@ export const registerUser = (
     }),
   });
 };
+
+export const getUserBanks = (token: string): Promise<Response> => {
+  return fetch(`${BASE_URL}/user/banks`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "access-token": token,
+    },
+  });
+};
