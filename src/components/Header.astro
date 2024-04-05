@@ -1,5 +1,6 @@
 ---
 import { type Bank } from "../models/bank";
+import CSVDialog from "./CSVDialog.astro";
 
 export interface Props {
   banks?: Bank[];
@@ -17,38 +18,48 @@ let { banks, isHome = false } = Astro.props;
 
 <header class="px-16 py-4 border-b border-secondary bg-white">
   <nav class="flex justify-between items-center">
-      <a href={isHome ? "/" : "/dashboard"} class="flex items-center gap-2">
+    <CSVDialog />
+    <a href={isHome ? "/" : "/dashboard"} class="flex items-center gap-2">
       <img src="/logo.svg" alt="Money Moon Logo" class="w-10" />
       <h1 class="text-black text-4xl font-display font-bold">Money Moon</h1>
     </a>
     <ul class="flex gap-4 text-black font-body">
       {
+        isLoggedIn && isHome && (
+          <li>
+            <a href="/dashboard" class="font-display font-bold hover:underline">
+              Dashboard
+            </a>
+          </li>
+        )
+      }
+      {
+        isLoggedIn && !isHome && (
+          <li>
+            <button
+              id="csv-button"
+              class="font-display font-bold px-4 bg-main rounded-lg text-white hover:opacity-80"
+            >
+              Upload CSV
+            </button>
+          </li>
+        )
+      }
+      {
         isLoggedIn ? (
           <>
-	    {isHome ? (
             <li>
-              <a href="/dashboard" class="font-display font-bold hover:underline">
-                Dashboard
-              </a>
-            </li>
-	    ) : (
-            <li>
-		<button id="csv-button" class="font-display font-bold px-4 bg-main rounded-lg text-white hover:opacity-80"
-		    >
-                Upload CSV
-              </button>
-            </li>
-	    )}
-            <li>
-		{banks && (
-              <label for="banks" class="font-display font-bold">
-                Bank:
-              </label>
-                <select id="banks" class="bg-transparent">
-                  {banks.map((bank) => (
-                    <option value={bank.id}>{bank.name}</option>
-                  ))}
-                </select>
+              {banks && (
+                <>
+                  <label for="banks" class="font-display font-bold">
+                    Bank:
+                  </label>
+                  <select id="banks" class="bg-transparent">
+                    {banks.map((bank) => (
+                      <option value={bank.id}>{bank.name}</option>
+                    ))}
+                  </select>
+                </>
               )}
             </li>
             <li>
@@ -71,3 +82,10 @@ let { banks, isHome = false } = Astro.props;
     </ul>
   </nav>
 </header>
+
+<script>
+  const $csvButton = document.getElementById("csv-button");
+  const $csvDialog = document.getElementById("csv-dialog") as HTMLDialogElement;
+
+  $csvButton?.addEventListener("click", () => $csvDialog.showModal());
+</script>

@@ -59,6 +59,11 @@ try {
     console.error(error.message, "ERROR");
   }
 }
+
+if (Astro.request.method === "POST") {
+  console.log("HELLO");
+  return Astro.redirect("/dashboard");
+}
 ---
 
 <Layout title="Dashboard | Money moon">

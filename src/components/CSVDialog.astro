@@ -1,0 +1,37 @@
+<dialog
+  id="csv-dialog"
+  class="absolute backdrop:bg-black/70 backdrop:backdrop-blur-sm rounded-2xl bg-white"
+>
+  <div class="relative text-black py-12 px-24">
+    <h1 class="font-bold font-display text-[64px]">Upload your CSV file</h1>
+    <h2 class="font-light font-body text-4xl text-black">
+      Load your CSV data into the table
+    </h2>
+    <form method="POST">
+      <input
+        type="file"
+        accept=".csv"
+        class="my-6 py-3 text-xl font-body text-black/80 file:px-3 file:py-2 file:rounded-lg file:border-black/10 file:font-display file:font-bold"
+        required
+      />
+      <button
+        type="submit"
+        class="w-full py-2 bg-main rounded-lg font-bold font-display text-[26px] text-white hover:opacity-75"
+        >Submit</button
+      >
+    </form>
+    <button
+      id="close-button"
+      type="button"
+      class="w-full py-2 bg-black/10 rounded-lg font-bold font-display text-[26px] mt-4 hover:opacity-75"
+      >Close</button
+    >
+  </div>
+</dialog>
+
+<script>
+  const $csvDialog = document.getElementById("csv-dialog") as HTMLDialogElement;
+  const $closeButton = document.getElementById("close-button");
+
+  $closeButton.addEventListener("click", () => $csvDialog.close());
+</script>
