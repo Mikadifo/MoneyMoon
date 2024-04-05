@@ -27,6 +27,8 @@ if (Astro.request.method === "POST") {
     if (decoded.message === "success") {
       Astro.cookies.set("token", decoded.data.token, {
         maxAge: MONTH_IN_MILLISECONDS,
+        secure: true,
+        httpOnly: true,
       });
       return Astro.redirect("/dashboard");
     }

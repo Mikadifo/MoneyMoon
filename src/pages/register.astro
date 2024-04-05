@@ -5,7 +5,6 @@ import {
   registerUser,
   type DefaultResponse,
 } from "../controllers/userController";
-import { MONTH_IN_MILLISECONDS } from "../constants/constants";
 import "./../styles/auth.css";
 
 let error: string = "";
@@ -29,10 +28,7 @@ if (Astro.request.method === "POST") {
     }
 
     if (decoded.message === "success") {
-      Astro.cookies.set("token", decoded.data.token, {
-        maxAge: MONTH_IN_MILLISECONDS,
-      });
-      return Astro.redirect("/dashboard");
+      return Astro.redirect("/login");
     }
   } catch (error) {
     if (error instanceof Error) {
