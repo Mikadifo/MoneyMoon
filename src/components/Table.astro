@@ -3,14 +3,7 @@ export interface Props {
   data: any[];
 }
 
-const HEAD_ELEMENTS = [
-  "ID",
-  "Date",
-  "Type",
-  "Description",
-  "Amount",
-  "Balance",
-];
+const HEAD_ELEMENTS = ["Date", "Type", "Description", "Amount", "Balance"];
 
 const { data } = Astro.props;
 ---
@@ -32,9 +25,6 @@ const { data } = Astro.props;
       {
         data.map((row) => (
           <tr>
-            <td scope="row" class="px-8 py-4 whitespace-nowrap">
-              {row.id}
-            </td>
             <td scope="row" class="px-8 py-4 whitespace-nowrap">
               {row.date}
             </td>
