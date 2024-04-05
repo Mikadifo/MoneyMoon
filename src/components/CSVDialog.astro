@@ -7,10 +7,11 @@
     <h2 class="font-light font-body text-4xl text-black">
       Load your CSV data into the table
     </h2>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       <input
         type="file"
         accept=".csv"
+        name="csvFile"
         class="my-6 py-3 text-xl font-body text-black/80 file:px-3 file:py-2 file:rounded-lg file:border-black/10 file:font-display file:font-bold"
         required
       />
@@ -33,5 +34,5 @@
   const $csvDialog = document.getElementById("csv-dialog") as HTMLDialogElement;
   const $closeButton = document.getElementById("close-button");
 
-  $closeButton.addEventListener("click", () => $csvDialog.close());
+  $closeButton!.addEventListener("click", () => $csvDialog.close());
 </script>

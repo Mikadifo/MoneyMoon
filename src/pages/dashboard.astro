@@ -5,6 +5,7 @@ import Table from "../components/Table.astro";
 import Header from "../components/Header.astro";
 import type { Bank } from "../models/bank";
 import type { Transaction } from "../models/transaction";
+import { parseCsv } from "../utils/csvParser";
 import { getUserTransactions } from "../controllers/transactionController";
 import {
   getUserBanks,
@@ -61,8 +62,33 @@ try {
 }
 
 if (Astro.request.method === "POST") {
-  console.log("HELLO");
-  return Astro.redirect("/dashboard");
+  try {
+    const data = await Astro.request.formData();
+    const csvFile = data.get("csvFile") as File;
+    const csvData = await csvFile.text();
+    const transactions = parseCsv(csvData);
+    const response = await getUserBanks(token || "");
+    //const decoded = (await response.json()) as DefaultResponse;
+
+    //if (decoded.status === 401) {
+    //return Astro.redirect("/logout");
+    //}
+
+    //if (decoded.message === "error") {
+    //console.error(decoded.data);
+    //error = decoded.data;
+    //}
+
+    //if (decoded.message === "success") {
+    //banks = decoded.data;
+    //}
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message, "ERROR");
+    }
+  } finally {
+    return Astro.redirect("/dashboard");
+  }
 }
 ---
 
