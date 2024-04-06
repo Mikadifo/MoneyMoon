@@ -24,6 +24,8 @@ const token = Astro.cookies.get("token")?.value;
 let banks: Bank[] = [];
 let bankId = "";
 let transactions: Transaction[] = [];
+let page = 1;
+let pages = 1;
 let error: string = "";
 
 try {
@@ -58,7 +60,9 @@ try {
   }
 
   if (transactionsDecoded.message === "success") {
-    transactions = transactionsDecoded.data;
+    transactions = transactionsDecoded.data.transactions;
+    page = transactionsDecoded.data.paginator.page;
+    pages = transactionsDecoded.data.paginator.pages;
   }
 } catch (error) {
   if (error instanceof Error) {
@@ -108,6 +112,6 @@ if (Astro.request.method === "POST") {
       <MoneyCard amount={822.34} label="Savings" />
       <MoneyCard amount={1340.45} label="Mika Pc" />
     </div>
-    <Table data={transactions} />
+    <Table data={transactions} page={page} pages={pages} />
   </div>
 </Layout>

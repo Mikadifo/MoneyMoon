@@ -1,51 +1,58 @@
 ---
 export interface Props {
   data: any[];
+  page: number;
+  pages: number;
 }
 
 const HEAD_ELEMENTS = ["Date", "Type", "Description", "Amount", "Balance"];
 
-const { data } = Astro.props;
+const { data, page, pages } = Astro.props;
 ---
 
-<div class="rounded-2xl bg-[#fff] px-8 py-4">
-  <table class="text-left text-black">
-    <thead class="font-bold font-display text-xl uppercase">
-      <tr>
+<div>
+  <div class="rounded-2xl bg-[#fff] px-8 py-4">
+    <table class="text-left text-black">
+      <thead class="font-bold font-display text-xl uppercase">
+        <tr>
+          {
+            HEAD_ELEMENTS.map((element) => (
+              <th scope="col" class="px-8 py-4">
+                {element}
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody class="font-body text-xl">
         {
-          HEAD_ELEMENTS.map((element) => (
-            <th scope="col" class="px-8 py-4">
-              {element}
-            </th>
+          data.map((row) => (
+            <tr>
+              <td scope="row" class="px-8 py-4 whitespace-nowrap">
+                {row.date}
+              </td>
+              <td scope="row" class="px-8 py-4 whitespace-nowrap">
+                {row.type}
+              </td>
+              <td scope="row" class="px-8 py-4 whitespace-nowrap">
+                {row.description}
+              </td>
+              <td
+                scope="row"
+                class={`px-8 py-4 whitespace-nowrap ${row.amount > 0 ? "text-success" : "text-error"}`}
+              >
+                $ {row.amount}
+              </td>
+              <td scope="row" class="px-8 py-4 whitespace-nowrap">
+                $ {row.balance}
+              </td>
+            </tr>
           ))
         }
-      </tr>
-    </thead>
-    <tbody class="font-body text-xl">
-      {
-        data.map((row) => (
-          <tr>
-            <td scope="row" class="px-8 py-4 whitespace-nowrap">
-              {row.date}
-            </td>
-            <td scope="row" class="px-8 py-4 whitespace-nowrap">
-              {row.type}
-            </td>
-            <td scope="row" class="px-8 py-4 whitespace-nowrap">
-              {row.description}
-            </td>
-            <td
-              scope="row"
-              class={`px-8 py-4 whitespace-nowrap ${row.amount > 0 ? "text-success" : "text-error"}`}
-            >
-              $ {row.amount}
-            </td>
-            <td scope="row" class="px-8 py-4 whitespace-nowrap">
-              $ {row.balance}
-            </td>
-          </tr>
-        ))
-      }
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </div>
+  <form method="GET">
+    <button>Page {page} of {pages}</button>
+  </form>
 </div>
