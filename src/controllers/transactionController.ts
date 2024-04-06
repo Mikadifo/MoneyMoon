@@ -16,17 +16,14 @@ export const getUserTransactions = (
 
 export const createTransactions = (
   token: string,
-  bankId: string,
   transactions: Transaction[]
 ): Promise<Response> => {
-  return fetch(`${BASE_URL}/transactions/create}`, {
+  return fetch(`${BASE_URL}/transactions/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "access-token": token,
     },
-    body: JSON.stringify({
-      transactions: JSON.stringify(transactions),
-    }),
+    body: JSON.stringify([...transactions]),
   });
 };

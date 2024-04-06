@@ -6,7 +6,10 @@ import Header from "../components/Header.astro";
 import type { Bank } from "../models/bank";
 import type { Transaction } from "../models/transaction";
 import { csvToTransactions } from "../utils/csvParser";
-import { getUserTransactions } from "../controllers/transactionController";
+import {
+  createTransactions,
+  getUserTransactions,
+} from "../controllers/transactionController";
 import {
   getUserBanks,
   type DefaultResponse,
@@ -16,13 +19,14 @@ if (!Astro.cookies.has("token")) {
   return Astro.redirect("/login");
 }
 
+const token = Astro.cookies.get("token")?.value;
+
 let banks: Bank[] = [];
 let bankId = "";
 let transactions: Transaction[] = [];
 let error: string = "";
 
 try {
-  const token = Astro.cookies.get("token")?.value;
   const response = await getUserBanks(token || "");
   const decoded = (await response.json()) as DefaultResponse;
 
@@ -68,21 +72,21 @@ if (Astro.request.method === "POST") {
     const csvFile = data.get("csvFile") as File;
     const csvData = await csvFile.text();
     const transactions = csvToTransactions(csvData, bankId);
-    //const response = await getUserBanks(token || "");
-    //const decoded = (await response.json()) as DefaultResponse;
+    const response = await createTransactions(token || "", transactions);
+    const decoded = (await response.json()) as DefaultResponse;
 
-    //if (decoded.status === 401) {
-    //return Astro.redirect("/logout");
-    //}
+    if (decoded.status === 401) {
+      return Astro.redirect("/logout");
+    }
 
-    //if (decoded.message === "error") {
-    //console.error(decoded.data);
-    //error = decoded.data;
-    //}
+    if (decoded.message === "error") {
+      console.error(decoded.data);
+      error = decoded.data;
+    }
 
-    //if (decoded.message === "success") {
-    //banks = decoded.data;
-    //}
+    if (decoded.message === "partial") {
+      console.error(decoded.data);
+    }
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message, "ERROR");
