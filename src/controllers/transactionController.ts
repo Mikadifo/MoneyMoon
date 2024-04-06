@@ -19,14 +19,13 @@ export const createTransactions = (
   bankId: string,
   transactions: Transaction[]
 ): Promise<Response> => {
-  return fetch(`${BASE_URL}/transactions}`, {
+  return fetch(`${BASE_URL}/transactions/create}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "access-token": token,
     },
     body: JSON.stringify({
-      bankId,
       transactions: JSON.stringify(transactions),
     }),
   });

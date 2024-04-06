@@ -1,6 +1,9 @@
 import type { Transaction } from "../models/transaction";
 
-export const parseCsv = (csvData: string): Transaction[] => {
+export const csvToTransactions = (
+  csvData: string,
+  bankId: string
+): Transaction[] => {
   const transactions: Transaction[] = [];
   const lines = csvData.split("\n");
   const headers = lines[0].split(",");
@@ -9,6 +12,7 @@ export const parseCsv = (csvData: string): Transaction[] => {
     if (!lines[i]) continue;
     const row = lines[i].split(",");
     const transaction: Transaction = {
+      bankId,
       date: row[headers.indexOf("Transaction Date")],
       type: row[headers.indexOf("Transaction Type")],
       description: row[headers.indexOf("Transaction Description")],

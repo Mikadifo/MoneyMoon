@@ -5,7 +5,7 @@ import Table from "../components/Table.astro";
 import Header from "../components/Header.astro";
 import type { Bank } from "../models/bank";
 import type { Transaction } from "../models/transaction";
-import { parseCsv } from "../utils/csvParser";
+import { csvToTransactions } from "../utils/csvParser";
 import { getUserTransactions } from "../controllers/transactionController";
 import {
   getUserBanks,
@@ -17,6 +17,7 @@ if (!Astro.cookies.has("token")) {
 }
 
 let banks: Bank[] = [];
+let bankId = "";
 let transactions: Transaction[] = [];
 let error: string = "";
 
@@ -38,7 +39,7 @@ try {
     banks = decoded.data;
   }
 
-  const bankId = banks[0].id; //User will only have 1 bank for now
+  bankId = banks[0].id; //User will only have 1 bank for now
   const transactionsResponse = await getUserTransactions(token || "", bankId);
   const transactionsDecoded =
     (await transactionsResponse.json()) as DefaultResponse;
@@ -66,8 +67,8 @@ if (Astro.request.method === "POST") {
     const data = await Astro.request.formData();
     const csvFile = data.get("csvFile") as File;
     const csvData = await csvFile.text();
-    const transactions = parseCsv(csvData);
-    const response = await getUserBanks(token || "");
+    const transactions = csvToTransactions(csvData, bankId);
+    //const response = await getUserBanks(token || "");
     //const decoded = (await response.json()) as DefaultResponse;
 
     //if (decoded.status === 401) {
