@@ -20,6 +20,11 @@ export const csvToTransactions = (
       balance: +row[headers.indexOf("Balance")],
     };
 
+    if (transaction.amount === 0) {
+      console.log(transaction);
+      continue;
+    }
+
     transactions.push(transaction);
   }
 
