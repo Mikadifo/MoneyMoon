@@ -21,7 +21,6 @@ export const csvToTransactions = (
     };
 
     if (transaction.amount === 0) {
-      console.log(transaction);
       continue;
     }
 
