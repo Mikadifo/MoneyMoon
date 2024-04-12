@@ -10,14 +10,14 @@ const HEAD_ELEMENTS = ["Date", "Type", "Description", "Amount", "Balance"];
 const { data, page, pages } = Astro.props;
 ---
 
-<div>
-  <div class="rounded-2xl bg-[#fff] px-8 py-4">
+<div class="w-full">
+  <div class="rounded-2xl bg-[#fff] px-8 py-4 w-full overflow-auto">
     <table class="text-left text-black">
       <thead class="font-bold font-display text-xl uppercase">
         <tr>
           {
             HEAD_ELEMENTS.map((element) => (
-              <th scope="col" class="px-8 py-4">
+              <th scope="col" class="px-4 py-4">
                 {element}
               </th>
             ))
@@ -28,22 +28,22 @@ const { data, page, pages } = Astro.props;
         {
           data.map((row) => (
             <tr>
-              <td scope="row" class="px-8 py-4 whitespace-nowrap">
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
                 {row.date}
               </td>
-              <td scope="row" class="px-8 py-4 whitespace-nowrap">
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
                 {row.type}
               </td>
-              <td scope="row" class="px-8 py-4 whitespace-nowrap">
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
                 {row.description}
               </td>
               <td
                 scope="row"
-                class={`px-8 py-4 whitespace-nowrap ${row.amount > 0 ? "text-success" : "text-error"}`}
+                class={`px-5 py-4 whitespace-nowrap ${row.amount > 0 ? "text-success" : "text-error"}`}
               >
                 $ {row.amount}
               </td>
-              <td scope="row" class="px-8 py-4 whitespace-nowrap">
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
                 $ {row.balance}
               </td>
             </tr>
