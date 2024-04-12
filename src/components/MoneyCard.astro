@@ -1,19 +1,42 @@
 ---
+import type { Debt } from "../models/debt";
+import MoneyCardDialog from "./MoneyCardDialog.astro";
+
 interface Props {
-  amount: number;
-  label: string;
+  debt?: Debt;
+  label?: string;
+  amount?: number;
 }
 
-const { amount, label } = Astro.props;
+const { debt, label, amount } = Astro.props;
 ---
 
-<div class="bg-black text-white rounded-2xl inline-block">
-  <div class="flex flex-col px-16 py-8 items-center">
-    <span class="font-display font-bold text-4xl mb-4">
-      $ {amount}
-    </span>
-    <span class="font-body text-xl">
-      {label}
-    </span>
-  </div>
-</div>
+<>
+  <MoneyCardDialog debt={debt} />
+  <button
+    type="button"
+    class={`transition ease-in-out duration-300 bg-black text-white rounded-2xl inline-block cursor-default ${debt && "hover:-translate-y-1 hover:scale-105 hover:cursor-pointer money-card-button"}`}
+  >
+    <div class="flex flex-col px-16 py-8 items-center">
+      <span class="font-display font-bold text-4xl mb-4">
+        $ {debt ? debt!.amount - debt!.payed : amount}
+      </span>
+      <span class="font-body text-xl">
+        {debt?.name || label}
+      </span>
+    </div>
+  </button>
+</>
+<script>
+  const $moneyCardButtons =
+    document.getElementsByClassName("money-card-button");
+  const $moneyCardDialog = document.getElementById(
+    "money-card-dialog"
+  ) as HTMLDialogElement;
+
+  for (let i = 0; i < $moneyCardButtons.length; i++) {
+    $moneyCardButtons[i].addEventListener("click", () =>
+      $moneyCardDialog.showModal()
+    );
+  }
+</script>

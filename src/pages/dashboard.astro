@@ -4,6 +4,7 @@ import MoneyCard from "../components/MoneyCard.astro";
 import Table from "../components/Table.astro";
 import Header from "../components/Header.astro";
 import type { Bank } from "../models/bank";
+import type { Debt } from "../models/debt";
 import type { Transaction } from "../models/transaction";
 import { csvToTransactions } from "../utils/csvParser";
 import {
@@ -14,6 +15,7 @@ import {
   getUserBanks,
   type DefaultResponse,
 } from "../controllers/userController";
+import { getUserDebts } from "../controllers/debtController";
 
 if (!Astro.cookies.has("token")) {
   return Astro.redirect("/login");
@@ -22,6 +24,7 @@ if (!Astro.cookies.has("token")) {
 const token = Astro.cookies.get("token")?.value;
 
 let banks: Bank[] = [];
+let debts: Debt[] = [];
 let bankId = "";
 let transactions: Transaction[] = [];
 let page = 1;
@@ -53,6 +56,23 @@ try {
   }
 
   bankId = banks[0].id; //User will only have 1 bank for now
+
+  const debtsResponse = await getUserDebts(token || "");
+  const debtsDecoded = (await debtsResponse.json()) as DefaultResponse;
+
+  if (debtsDecoded.status === 401) {
+    return Astro.redirect("/logout");
+  }
+
+  if (debtsDecoded.message === "error") {
+    console.error(debtsDecoded.data);
+    error = debtsDecoded.data;
+  }
+
+  if (debtsDecoded.message === "success") {
+    debts = debtsDecoded.data;
+  }
+
   const transactionsResponse = await getUserTransactions(
     token || "",
     bankId,
@@ -115,13 +135,12 @@ if (Astro.request.method === "POST") {
 <Layout title="Dashboard | Money moon">
   <Header banks={banks} />
   <div class="flex flex-col items-center gap-16 mb-16">
-    <div class="flex gap-8 justify-center mt-12">
+    <div class="flex flex-wrap gap-8 justify-center mt-12">
       <MoneyCard
         amount={transactions[0] ? transactions[0].balance : 0}
         label="Bank Balance"
       />
-      <MoneyCard amount={822.34} label="Savings" />
-      <MoneyCard amount={1340.45} label="Mika Pc" />
+      {debts.map((debt) => <MoneyCard debt={debt} />)}
     </div>
     <Table data={transactions} page={page} pages={pages} />
   </div>
