@@ -28,6 +28,13 @@ let page = 1;
 let pages = 1;
 let error: string = "";
 
+if (Astro.request.method === "GET") {
+  const pageNumber = Astro.url.searchParams.get("page") || "";
+  if (pageNumber) {
+    page = +pageNumber;
+  }
+}
+
 try {
   const response = await getUserBanks(token || "");
   const decoded = (await response.json()) as DefaultResponse;
@@ -46,7 +53,11 @@ try {
   }
 
   bankId = banks[0].id; //User will only have 1 bank for now
-  const transactionsResponse = await getUserTransactions(token || "", bankId);
+  const transactionsResponse = await getUserTransactions(
+    token || "",
+    bankId,
+    page
+  );
   const transactionsDecoded =
     (await transactionsResponse.json()) as DefaultResponse;
 

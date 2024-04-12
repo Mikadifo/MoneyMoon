@@ -52,7 +52,66 @@ const { data, page, pages } = Astro.props;
       </tbody>
     </table>
   </div>
-  <form method="GET">
-    <button>Page {page} of {pages}</button>
+  <form
+    method="GET"
+    class="mt-4 me-8 flex justify-end items-center text-xl font-body"
+  >
+    {
+      page > 1 && (
+        <button
+          type="button"
+          id="previous-page-button"
+          class="bg-secondary rounded-lg px-4 py-1 font-bold me-4"
+        >
+          Previous
+        </button>
+      )
+    }
+    Page
+    <input
+      type="number"
+      value={page}
+      id="page-number"
+      name="page"
+      min="1"
+      max={pages}
+      class="w-16 mx-2 px-2 rounded-lg"
+    />
+    of {pages}
+    {
+      page < pages && (
+        <button
+          type="button"
+          id="next-page-button"
+          class="bg-secondary rounded-lg px-4 py-1 font-bold ms-4"
+        >
+          Next
+        </button>
+      )
+    }
   </form>
 </div>
+
+<script>
+  const $pageNumber = document.getElementById(
+    "page-number"
+  ) as HTMLInputElement;
+  const $nextPageButton = document.getElementById("next-page-button");
+  const $previousPageButton = document.getElementById("previous-page-button");
+
+  $nextPageButton?.addEventListener("click", (evt) => {
+    evt.preventDefault();
+    const nextPage = $pageNumber.value;
+    window.location.assign(
+      window.location.pathname + "?page=" + (+nextPage + 1)
+    );
+  });
+
+  $previousPageButton?.addEventListener("click", (evt) => {
+    evt.preventDefault();
+    const previousPage = $pageNumber.value;
+    window.location.assign(
+      window.location.pathname + "?page=" + (+previousPage - 1)
+    );
+  });
+</script>

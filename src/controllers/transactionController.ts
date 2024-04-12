@@ -4,9 +4,10 @@ const BASE_URL = (await import.meta.env.PUBLIC_API_URL) as string;
 
 export const getUserTransactions = (
   token: string,
-  bankId: string
+  bankId: string,
+  page: number = 1
 ): Promise<Response> => {
-  return fetch(`${BASE_URL}/transactions/${bankId}`, {
+  return fetch(`${BASE_URL}/transactions/${bankId}?page=${page}`, {
     method: "GET",
     headers: {
       "access-token": token,
