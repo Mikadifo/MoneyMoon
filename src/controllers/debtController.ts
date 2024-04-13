@@ -8,3 +8,16 @@ export const getUserDebts = (token: string): Promise<Response> => {
     },
   });
 };
+
+export const payDebt = (
+  token: string,
+  name: string,
+  amount: number
+): Promise<Response> => {
+  return fetch(`${BASE_URL}/debts/pay?name=${name}&amount=${amount}`, {
+    method: "PUT",
+    headers: {
+      "access-token": token,
+    },
+  });
+};

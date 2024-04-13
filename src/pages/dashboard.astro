@@ -15,7 +15,7 @@ import {
   getUserBanks,
   type DefaultResponse,
 } from "../controllers/userController";
-import { getUserDebts } from "../controllers/debtController";
+import { getUserDebts, payDebt } from "../controllers/debtController";
 
 if (!Astro.cookies.has("token")) {
   return Astro.redirect("/login");
@@ -105,22 +105,41 @@ if (Astro.request.method === "POST") {
   try {
     const data = await Astro.request.formData();
     const csvFile = data.get("csvFile") as File;
-    const csvData = await csvFile.text();
-    const transactions = csvToTransactions(csvData, bankId);
-    const response = await createTransactions(token || "", transactions);
-    const decoded = (await response.json()) as DefaultResponse;
+    const paymentAmount = +(data.get("paymentAmount") || 0);
+    const debtName = data.get("debtName") as string;
 
-    if (decoded.status === 401) {
-      return Astro.redirect("/logout");
+    if (paymentAmount && debtName) {
+      const response = await payDebt(token || "", debtName, paymentAmount);
+      const decoded = (await response.json()) as DefaultResponse;
+
+      if (decoded.status === 401) {
+        return Astro.redirect("/logout");
+      }
+
+      if (decoded.message === "error") {
+        console.error(decoded.data);
+        error = decoded.data;
+      }
     }
 
-    if (decoded.message === "error") {
-      console.error(decoded.data);
-      error = decoded.data;
-    }
+    if (csvFile) {
+      const csvData = await csvFile.text();
+      const transactions = csvToTransactions(csvData, bankId);
+      const response = await createTransactions(token || "", transactions);
+      const decoded = (await response.json()) as DefaultResponse;
 
-    if (decoded.message === "partial") {
-      console.error(decoded.data);
+      if (decoded.status === 401) {
+        return Astro.redirect("/logout");
+      }
+
+      if (decoded.message === "error") {
+        console.error(decoded.data);
+        error = decoded.data;
+      }
+
+      if (decoded.message === "partial") {
+        console.error(decoded.data);
+      }
     }
   } catch (error) {
     if (error instanceof Error) {
