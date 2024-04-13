@@ -178,7 +178,7 @@ if (Astro.request.method === "POST") {
         amount={transactions[0] ? transactions[0].balance : 0}
         label="Bank Balance"
       />
-      {debts.map((debt) => <MoneyCard debt={debt} />)}
+      {debts && debts.map((debt) => <MoneyCard debt={debt} />)}
     </div>
     <Table data={transactions} page={page} pages={pages} />
   </div>
