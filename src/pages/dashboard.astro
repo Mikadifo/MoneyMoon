@@ -15,7 +15,11 @@ import {
   getUserBanks,
   type DefaultResponse,
 } from "../controllers/userController";
-import { getUserDebts, payDebt } from "../controllers/debtController";
+import {
+  getUserDebts,
+  payDebt,
+  deleteDebt,
+} from "../controllers/debtController";
 
 if (!Astro.cookies.has("token")) {
   return Astro.redirect("/login");
@@ -107,6 +111,21 @@ if (Astro.request.method === "POST") {
     const csvFile = data.get("csvFile") as File;
     const paymentAmount = +(data.get("paymentAmount") || 0);
     const debtName = data.get("debtName") as string;
+    const debtAction = data.get("debtAction") as string;
+
+    if (debtAction === "delete" && debtName) {
+      const response = await deleteDebt(token || "", debtName);
+      const decoded = (await response.json()) as DefaultResponse;
+
+      if (decoded.status === 401) {
+        return Astro.redirect("/logout");
+      }
+
+      if (decoded.message === "error") {
+        console.error(decoded.data);
+        error = decoded.data;
+      }
+    }
 
     if (paymentAmount && debtName) {
       const response = await payDebt(token || "", debtName, paymentAmount);

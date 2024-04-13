@@ -44,13 +44,17 @@ const { debt, label, amount } = Astro.props;
           >
             Pay
           </button>
-          <button class="mt-2 me-2 hover:click-pointer absolute top-0 right-0">
-            <img
-              src="trash-icon.svg"
-              alt="Delete Debt Icon"
-              class="transition ease-in-out w-6 bg-error rounded-2xl p-1 hover:scale-110"
-            />
-          </button>
+          <form method="POST" class="absolute top-0 right-0 mt-2 me-2">
+            <input type="hidden" name="debtName" value={debt.name} />
+            <input type="hidden" name="debtAction" value="delete" />
+            <button type="submit" class="hover:click-pointer">
+              <img
+                src="trash-icon.svg"
+                alt="Delete Debt Icon"
+                class="transition ease-in-out w-6 bg-error rounded-2xl p-1 hover:scale-110"
+              />
+            </button>
+          </form>
         </>
       )
     }

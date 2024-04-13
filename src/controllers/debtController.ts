@@ -21,3 +21,12 @@ export const payDebt = (
     },
   });
 };
+
+export const deleteDebt = (token: string, name: string): Promise<Response> => {
+  return fetch(`${BASE_URL}/debts/remove/${name}`, {
+    method: "DELETE",
+    headers: {
+      "access-token": token,
+    },
+  });
+};
