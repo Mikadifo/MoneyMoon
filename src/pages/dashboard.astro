@@ -18,6 +18,7 @@ import {
 import {
   getUserDebts,
   payDebt,
+  createDebt,
   deleteDebt,
 } from "../controllers/debtController";
 
@@ -31,7 +32,7 @@ let banks: Bank[] = [];
 let debts: Debt[] = [];
 let bankId = "";
 let transactions: Transaction[] = [];
-let balance = Astro.cookies.get("balance")?.value || 0;
+let balance = +(Astro.cookies.get("balance")?.value || 0);
 let page = 1;
 let pages = 1;
 let error: string = "";
@@ -116,6 +117,28 @@ if (Astro.request.method === "POST") {
     const paymentAmount = +(data.get("paymentAmount") || 0);
     const debtName = data.get("debtName") as string;
     const debtAction = data.get("debtAction") as string;
+    const debtDescription = data.get("debtDescription") as string;
+    const debtAmount = +(data.get("debtAmount") || 0);
+
+    if (debtDescription && debtName && debtAmount) {
+      const newDebt: Debt = {
+        name: debtName,
+        description: debtDescription,
+        amount: debtAmount,
+        payed: 0,
+      };
+      const response = await createDebt(token || "", newDebt);
+      const decoded = (await response.json()) as DefaultResponse;
+
+      if (decoded.status === 401) {
+        return Astro.redirect("/logout");
+      }
+
+      if (decoded.message === "error") {
+        console.error(decoded.data);
+        error = decoded.data;
+      }
+    }
 
     if (debtAction === "delete" && debtName) {
       const response = await deleteDebt(token || "", debtName);
@@ -180,6 +203,7 @@ if (Astro.request.method === "POST") {
     <div class="flex flex-wrap gap-8 justify-center mt-12">
       <MoneyCard amount={balance} label="Bank Balance" />
       {debts && debts.map((debt) => <MoneyCard debt={debt} />)}
+      <MoneyCard isNew={true} />
     </div>
     <Table data={transactions} page={page} pages={pages} />
   </div>

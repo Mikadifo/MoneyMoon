@@ -1,0 +1,52 @@
+<dialog
+  id="card-dialog"
+  class="absolute backdrop:bg-black/70 backdrop:backdrop-blur-sm rounded-2xl bg-white"
+>
+  <div class="relative text-black py-12 px-24">
+    <h1 class="font-bold font-display text-[64px]">Create a new Debt</h1>
+    <form method="POST">
+      <input
+        type="text"
+        name="debtName"
+        class="mt-8 text-xl font-body text-black/80 px-4 py-3 rounded-lg border-black/10 w-full"
+        placeholder="Debt name"
+        required
+      />
+      <input
+        type="text"
+        name="debtDescription"
+        class="my-4 text-xl font-body text-black/80 px-4 py-3 rounded-lg border-black/10 w-full"
+        placeholder="Debt description"
+        required
+      />
+      <input
+        type="number"
+        name="debtAmount"
+        min="0"
+        class="mb-8 text-xl font-body text-black/80 px-4 py-3 rounded-lg border-black/10 w-full"
+        placeholder="Debt amount"
+        required
+      />
+      <button
+        type="submit"
+        class="w-full py-2 bg-main rounded-lg font-bold font-display text-[26px] text-white hover:opacity-75"
+        >Save</button
+      >
+    </form>
+    <button
+      id="card-close-button"
+      type="button"
+      class="w-full py-2 bg-black/10 rounded-lg font-bold font-display text-[26px] mt-4 hover:opacity-75"
+      >Close</button
+    >
+  </div>
+</dialog>
+
+<script>
+  const $cardDialog = document.getElementById(
+    "card-dialog"
+  ) as HTMLDialogElement;
+  const $closeButton = document.getElementById("card-close-button");
+
+  $closeButton!.addEventListener("click", () => $cardDialog.close());
+</script>

@@ -1,74 +1,89 @@
 ---
+import CardDialog from "./CardDialog.astro";
 import type { Debt } from "../models/debt";
 
 interface Props {
+  isNew?: boolean;
   debt?: Debt;
   label?: string;
   amount?: number;
 }
 
-const { debt, label, amount } = Astro.props;
+const { debt, label, amount, isNew } = Astro.props;
 ---
 
-<div
-  class="transition ease-in-out duration-300 bg-black text-white rounded-2xl inline-block cursor-default relative"
->
-  <div class="flex flex-col px-16 py-8 items-center">
-    <span class="font-display font-bold text-4xl mb-4">
-      $ {debt ? debt!.amount - debt!.payed : amount}
-    </span>
-    <span class="font-body text-xl mb-4">
-      {debt?.name || label}
-    </span>
-    {
-      debt && (
-        <>
-          <form
-            method="POST"
-            id="debt-pay-form"
-            class="absolute bottom-[-42px] font-body w-full left-0 hidden"
-          >
-            <input
-              type="number"
-              name="paymentAmount"
-              max={debt.amount - debt.payed}
-              placeholder="Enter a value"
-              required
-              class="bg-black/90 px-4 py-2 rounded-2xl w-full"
-            />
-            <input type="hidden" name="debtName" value={debt.name} />
-          </form>
-          <button
-            id="debt-pay-option"
-            class="bg-success w-[calc(100%-8px)] rounded-2xl font-display font-bold hover:click-pointer hover:opacity-90 absolute bottom-1"
-          >
-            Pay
-          </button>
-          <form method="POST" class="absolute top-0 right-0 mt-2 me-2">
-            <input type="hidden" name="debtName" value={debt.name} />
-            <input type="hidden" name="debtAction" value="delete" />
-            <button
-              id="debt-delete-option"
-              type="submit"
-              class="hover:click-pointer"
+{
+  isNew ? (
+    <>
+      <CardDialog />
+      <button
+        type="button"
+        id="new-card-button"
+        class="transition ease-in-out duration-300 bg-black text-white rounded-2xl cursor-default flex items-center hover:cursor-pointer hover:scale-110"
+      >
+        <span class="font-display font-bold text-6xl px-16 py-12">+</span>
+      </button>
+    </>
+  ) : (
+    <div class="bg-black text-white rounded-2xl inline-block cursor-default relative">
+      <div class="flex flex-col px-16 py-8 items-center">
+        <span class="font-display font-bold text-4xl mb-4">
+          $ {debt ? debt!.amount - debt!.payed : amount}
+        </span>
+        <span class="font-body text-xl mb-4">{debt?.name || label}</span>
+        {debt && (
+          <>
+            <form
+              method="POST"
+              id="debt-pay-form"
+              class="absolute bottom-[-42px] font-body w-full left-0 hidden"
             >
-              <img
-                src="trash-icon.svg"
-                alt="Delete Debt Icon"
-                class="transition ease-in-out w-6 bg-error rounded-2xl p-1 hover:scale-110"
+              <input
+                type="number"
+                name="paymentAmount"
+                max={debt.amount - debt.payed}
+                placeholder="Enter a value"
+                required
+                class="bg-black/90 px-4 py-2 rounded-2xl w-full"
               />
+              <input type="hidden" name="debtName" value={debt.name} />
+            </form>
+            <button
+              id="debt-pay-option"
+              class="bg-success w-[calc(100%-8px)] rounded-2xl font-display font-bold hover:click-pointer hover:opacity-90 absolute bottom-1"
+            >
+              Pay
             </button>
-          </form>
-        </>
-      )
-    }
-  </div>
-</div>
+            <form method="POST" class="absolute top-0 right-0 mt-2 me-2">
+              <input type="hidden" name="debtName" value={debt.name} />
+              <input type="hidden" name="debtAction" value="delete" />
+              <button
+                id="debt-delete-option"
+                type="submit"
+                class="hover:click-pointer"
+              >
+                <img
+                  src="trash-icon.svg"
+                  alt="Delete Debt Icon"
+                  class="transition ease-in-out w-6 bg-error rounded-2xl p-1 hover:scale-110"
+                />
+              </button>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
 
 <script>
   const $debtPayOption = document.getElementById("debt-pay-option");
   const $debtDeleteOption = document.getElementById("debt-delete-option");
   const $debtPayForm = document.getElementById("debt-pay-form");
+  const $newCardButton = document.getElementById("new-card-button");
+  const $cardDialog = document.getElementById(
+    "card-dialog"
+  ) as HTMLDialogElement;
 
   const handleClickOutsideForm = (event: MouseEvent) => {
     const eventTarget = event.target as Node;
@@ -86,4 +101,6 @@ const { debt, label, amount } = Astro.props;
     const isOk = confirm("Are you sure you want to delete this debt?");
     if (!isOk) evt.preventDefault();
   });
+
+  $newCardButton?.addEventListener("click", () => $cardDialog.showModal());
 </script>

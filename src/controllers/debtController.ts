@@ -1,3 +1,5 @@
+import type { Debt } from "../models/debt";
+
 const BASE_URL = (await import.meta.env.PUBLIC_API_URL) as string;
 
 export const getUserDebts = (token: string): Promise<Response> => {
@@ -19,6 +21,17 @@ export const payDebt = (
     headers: {
       "access-token": token,
     },
+  });
+};
+
+export const createDebt = (token: string, body: Debt): Promise<Response> => {
+  return fetch(`${BASE_URL}/debts/create`, {
+    method: "POST",
+    headers: {
+      "access-token": token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
   });
 };
 
