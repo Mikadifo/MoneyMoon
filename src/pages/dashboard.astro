@@ -31,6 +31,7 @@ let banks: Bank[] = [];
 let debts: Debt[] = [];
 let bankId = "";
 let transactions: Transaction[] = [];
+let balance = Astro.cookies.get("balance")?.value || 0;
 let page = 1;
 let pages = 1;
 let error: string = "";
@@ -97,6 +98,9 @@ try {
   if (transactionsDecoded.message === "success") {
     transactions = transactionsDecoded.data.transactions;
     page = transactionsDecoded.data.paginator.page;
+    if (page === 1) {
+      Astro.cookies.set("balance", transactions[0].balance.toString());
+    }
     pages = transactionsDecoded.data.paginator.pages;
   }
 } catch (error) {
@@ -174,10 +178,7 @@ if (Astro.request.method === "POST") {
   <Header banks={banks} />
   <div class="flex flex-col items-center gap-16 mb-16">
     <div class="flex flex-wrap gap-8 justify-center mt-12">
-      <MoneyCard
-        amount={transactions[0] ? transactions[0].balance : 0}
-        label="Bank Balance"
-      />
+      <MoneyCard amount={balance} label="Bank Balance" />
       {debts && debts.map((debt) => <MoneyCard debt={debt} />)}
     </div>
     <Table data={transactions} page={page} pages={pages} />
