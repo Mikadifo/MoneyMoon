@@ -10,8 +10,10 @@ const HEAD_ELEMENTS = ["Date", "Type", "Description", "Amount", "Balance"];
 const { data, page, pages } = Astro.props;
 ---
 
-<div class="w-full">
-  <div class="rounded-2xl bg-[#fff] px-8 py-4 w-full overflow-auto">
+<div class="inline-block xl:mx-auto">
+  <div
+    class="rounded-2xl bg-[#fff] px-8 py-4 overflow-auto inline-block w-full xl:w-auto"
+  >
     <table class="text-left text-black">
       <thead class="font-bold font-display text-xl uppercase">
         <tr>
