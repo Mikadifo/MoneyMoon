@@ -1,0 +1,35 @@
+---
+export interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<div>
+  <div class="flex justify-between items-baseline">
+    <h3 class="font-display font-bold text-2xl">{title}</h3>
+    <div class="w-full bg-black/20 h-[1px] rounded-2xl mx-4"></div>
+    <button class="hover:underline hide-section-button">Hide</button>
+  </div>
+  <div class="group-container flex flex-wrap gap-8 justify-center mt-12">
+    <slot />
+  </div>
+</div>
+
+<script>
+  const $hideButtons = document.getElementsByClassName("hide-section-button");
+  const $groupContainers = document.getElementsByClassName("group-container");
+
+  for (let i = 0; i < $hideButtons.length; i++) {
+    $hideButtons[i].addEventListener("click", () => {
+      if ($groupContainers[i].classList.contains("hidden")) {
+        $hideButtons[i].textContent = "Hide";
+        $groupContainers[i].classList.remove("hidden");
+      } else {
+        $groupContainers[i].classList.add("hidden");
+        $hideButtons[i].textContent = "Show";
+      }
+    });
+  }
+</script>

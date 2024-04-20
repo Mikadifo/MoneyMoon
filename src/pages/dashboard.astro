@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import MoneyCard from "../components/MoneyCard.astro";
+import CardsSection from "../components/CardsSection.astro";
 import Table from "../components/Table.astro";
 import Header from "../components/Header.astro";
 import type { Bank } from "../models/bank";
@@ -199,12 +200,15 @@ if (Astro.request.method === "POST") {
 
 <Layout title="Dashboard | Money moon">
   <Header banks={banks} />
-  <div class="flex flex-col items-center gap-16 mb-16">
-    <div class="flex flex-wrap gap-8 justify-center mt-12">
+  <div class="flex flex-col gap-16 mx-16 my-4">
+    <CardsSection title="Balances">
       <MoneyCard amount={balance} label="Bank Balance" />
+    </CardsSection>
+    <CardsSection title="Debts">
       {debts && debts.map((debt) => <MoneyCard debt={debt} />)}
       <MoneyCard isNew={true} />
-    </div>
+    </CardsSection>
+    <CardsSection title="Groups" />
     <Table data={transactions} page={page} pages={pages} />
   </div>
 </Layout>
