@@ -5,11 +5,9 @@ import type { Debt } from "../models/debt";
 interface Props {
   isNew?: boolean;
   debt?: Debt;
-  label?: string;
-  amount?: number;
 }
 
-const { debt, label, amount, isNew } = Astro.props;
+const { debt, isNew } = Astro.props;
 ---
 
 {
@@ -28,9 +26,9 @@ const { debt, label, amount, isNew } = Astro.props;
     <div class="bg-black text-white rounded-2xl inline-block cursor-default relative">
       <div class="flex flex-col px-16 py-8 items-center">
         <span class="font-display font-bold text-4xl mb-4">
-          $ {debt ? debt!.amount - debt!.payed : amount}
+          $ {debt!.amount - debt!.payed}
         </span>
-        <span class="font-body text-xl mb-4">{debt?.name || label}</span>
+        <span class="font-body text-xl mb-4">{debt?.name}</span>
         {debt && (
           <>
             <form

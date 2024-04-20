@@ -1,0 +1,47 @@
+<dialog
+  id="group-dialog"
+  class="absolute backdrop:bg-black/70 backdrop:backdrop-blur-sm rounded-2xl bg-white"
+>
+  <div class="relative text-black py-12 px-24">
+    <h1 class="font-bold font-display text-[64px]">Create a new Group</h1>
+    <form method="POST">
+      <div class="flex justify-center items-center text-2xl text-black">
+        <h4 class="font-display font-bold">Total:</h4>
+        <span class="font-body ms-2">$ 3123.5</span>
+      </div>
+      <input
+        type="text"
+        name="groupName"
+        class="mt-8 text-xl font-body text-black/80 px-4 py-3 rounded-lg border-black/10 w-full"
+        placeholder="Group name"
+        required
+      />
+      <div class="mt-8 mb-4">
+        <h4 class="font-display font-bold text-xl">Transactions:</h4>
+        <p class="font-body text-base">
+          Select transactions to add to this group
+        </p>
+      </div>
+      <button
+        type="submit"
+        class="w-full py-2 bg-main rounded-lg font-bold font-display text-[26px] text-white hover:opacity-75"
+        >Save</button
+      >
+    </form>
+    <button
+      id="group-close-button"
+      type="button"
+      class="w-full py-2 bg-black/10 rounded-lg font-bold font-display text-[26px] mt-4 hover:opacity-75"
+      >Close</button
+    >
+  </div>
+</dialog>
+
+<script>
+  const $cardDialog = document.getElementById(
+    "group-dialog"
+  ) as HTMLDialogElement;
+  const $closeButton = document.getElementById("group-close-button");
+
+  $closeButton!.addEventListener("click", () => $cardDialog.close());
+</script>

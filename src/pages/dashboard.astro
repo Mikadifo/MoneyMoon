@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import MoneyCard from "../components/MoneyCard.astro";
+import GroupCard from "../components/GroupCard.astro";
+import BalanceCard from "../components/BalanceCard.astro";
 import CardsSection from "../components/CardsSection.astro";
 import Table from "../components/Table.astro";
 import Header from "../components/Header.astro";
@@ -22,6 +24,8 @@ import {
   createDebt,
   deleteDebt,
 } from "../controllers/debtController";
+import type { Group } from "../models/group";
+import { getUserGroups } from "../controllers/groupController";
 
 if (!Astro.cookies.has("token")) {
   return Astro.redirect("/login");
@@ -33,6 +37,7 @@ let banks: Bank[] = [];
 let debts: Debt[] = [];
 let bankId = "";
 let transactions: Transaction[] = [];
+let groups: Group[] = [];
 let balance = +(Astro.cookies.get("balance")?.value || 0);
 let page = 1;
 let pages = 1;
@@ -45,7 +50,7 @@ if (Astro.request.method === "GET") {
   }
 }
 
-try {
+const fetchBanks = async () => {
   const response = await getUserBanks(token || "");
   const decoded = (await response.json()) as DefaultResponse;
 
@@ -63,48 +68,72 @@ try {
   }
 
   bankId = banks[0].id; //User will only have 1 bank for now
+};
 
-  const debtsResponse = await getUserDebts(token || "");
-  const debtsDecoded = (await debtsResponse.json()) as DefaultResponse;
+const fetchDebts = async () => {
+  const response = await getUserDebts(token || "");
+  const decoded = (await response.json()) as DefaultResponse;
 
-  if (debtsDecoded.status === 401) {
+  if (decoded.status === 401) {
     return Astro.redirect("/logout");
   }
 
-  if (debtsDecoded.message === "error") {
-    console.error(debtsDecoded.data);
-    error = debtsDecoded.data;
+  if (decoded.message === "error") {
+    console.error(decoded.data);
+    error = decoded.data;
   }
 
-  if (debtsDecoded.message === "success") {
-    debts = debtsDecoded.data;
+  if (decoded.message === "success") {
+    debts = decoded.data;
   }
+};
 
-  const transactionsResponse = await getUserTransactions(
-    token || "",
-    bankId,
-    page
-  );
-  const transactionsDecoded =
-    (await transactionsResponse.json()) as DefaultResponse;
+const fetchTransactions = async () => {
+  const response = await getUserTransactions(token || "", bankId, page);
+  const decoded = (await response.json()) as DefaultResponse;
 
-  if (transactionsDecoded.status === 401) {
+  if (decoded.status === 401) {
     return Astro.redirect("/logout");
   }
 
-  if (transactionsDecoded.message === "error") {
-    console.error(transactionsDecoded.data);
-    error = transactionsDecoded.data;
+  if (decoded.message === "error") {
+    console.error(decoded.data);
+    error = decoded.data;
   }
 
-  if (transactionsDecoded.message === "success") {
-    transactions = transactionsDecoded.data.transactions;
-    page = transactionsDecoded.data.paginator.page;
+  if (decoded.message === "success") {
+    transactions = decoded.data.transactions;
+    page = decoded.data.paginator.page;
     if (page === 1) {
       Astro.cookies.set("balance", transactions[0].balance.toString());
     }
-    pages = transactionsDecoded.data.paginator.pages;
+    pages = decoded.data.paginator.pages;
   }
+};
+
+const fetchGroups = async () => {
+  const response = await getUserGroups(token || "");
+  const decoded = (await response.json()) as DefaultResponse;
+
+  if (decoded.status === 401) {
+    return Astro.redirect("/logout");
+  }
+
+  if (decoded.message === "error") {
+    console.error(decoded.data);
+    error = decoded.data;
+  }
+
+  if (decoded.message === "success") {
+    groups = decoded.data;
+  }
+};
+
+try {
+  await fetchBanks();
+  await fetchDebts();
+  await fetchTransactions();
+  await fetchGroups();
 } catch (error) {
   if (error instanceof Error) {
     console.error(error.message, "ERROR");
@@ -202,13 +231,16 @@ if (Astro.request.method === "POST") {
   <Header banks={banks} />
   <div class="flex flex-col gap-16 mx-16 my-4">
     <CardsSection title="Balances">
-      <MoneyCard amount={balance} label="Bank Balance" />
+      <BalanceCard amount={balance} label="Bank Balance" />
     </CardsSection>
     <CardsSection title="Debts">
       {debts && debts.map((debt) => <MoneyCard debt={debt} />)}
       <MoneyCard isNew={true} />
     </CardsSection>
-    <CardsSection title="Groups" />
+    <CardsSection title="Groups">
+      {groups && groups.map((group) => <GroupCard group={group} />)}
+      <GroupCard isNew={true} />
+    </CardsSection>
     <Table data={transactions} page={page} pages={pages} />
   </div>
 </Layout>
