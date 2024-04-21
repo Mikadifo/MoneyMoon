@@ -11,6 +11,20 @@ const { data, page, pages } = Astro.props;
 ---
 
 <div class="inline-block xl:mx-auto">
+  <div id="selection-controls" class="hidden gap-4 mb-4">
+    <button class="bg-main font-display font-bold text-white px-4 rounded-md"
+      >Add to group</button
+    >
+    <button class="bg-main font-display font-bold text-white px-4 rounded-md">
+      Add to new group</button
+    >
+    <button
+      id="cancel-selection"
+      class="bg-black/30 font-display font-bold text-black px-4 rounded-md"
+    >
+      Cancel</button
+    >
+  </div>
   <div
     class="rounded-2xl bg-[#fff] px-8 py-4 overflow-auto inline-block w-full xl:w-auto"
   >
@@ -101,6 +115,36 @@ const { data, page, pages } = Astro.props;
   const $nextPageButton = document.getElementById("next-page-button");
   const $previousPageButton = document.getElementById("previous-page-button");
   const $tableRows = document.getElementsByClassName("table-row");
+  const $selectionControls = document.getElementById("selection-controls");
+  const $cancelSelectionButton = document.getElementById("cancel-selection");
+
+  let selectedTransactions: string[] = JSON.parse(
+    localStorage.getItem("selectedTransactions") || "[]"
+  );
+
+  if (selectedTransactions.length > 0) {
+    $selectionControls!.classList.remove("hidden");
+    $selectionControls!.classList.add("flex");
+  } else {
+    $selectionControls!.classList.remove("flex");
+    $selectionControls!.classList.add("hidden");
+  }
+
+  $cancelSelectionButton?.addEventListener("click", () => {
+    let selectedTransactions: string[] = JSON.parse(
+      localStorage.getItem("selectedTransactions") || "[]"
+    );
+
+    for (let row of $tableRows) {
+      if (selectedTransactions.includes(row.id)) {
+        row.classList.remove("bg-main/15");
+      }
+    }
+
+    localStorage.setItem("selectedTransactions", "[]");
+    $selectionControls!.classList.remove("flex");
+    $selectionControls!.classList.add("hidden");
+  });
 
   $nextPageButton?.addEventListener("click", (evt) => {
     evt.preventDefault();
@@ -118,13 +162,11 @@ const { data, page, pages } = Astro.props;
     );
   });
 
-  let selectedTransactions: string[] = JSON.parse(
-    localStorage.getItem("selectedTransactions") || "[]"
-  );
   for (let row of $tableRows) {
     if (selectedTransactions.includes(row.id)) {
       row.classList.add("bg-main/15");
     }
+
     row.addEventListener("click", () => {
       let selectedTransactions: string[] = JSON.parse(
         localStorage.getItem("selectedTransactions") || "[]"
@@ -138,6 +180,14 @@ const { data, page, pages } = Astro.props;
           (transaction) => transaction !== row.id
         );
         row.classList.remove("bg-main/15");
+      }
+
+      if (selectedTransactions.length > 0) {
+        $selectionControls!.classList.remove("hidden");
+        $selectionControls!.classList.add("flex");
+      } else {
+        $selectionControls!.classList.remove("flex");
+        $selectionControls!.classList.add("hidden");
       }
 
       localStorage.setItem(
