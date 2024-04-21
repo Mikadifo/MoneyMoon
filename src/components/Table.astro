@@ -118,7 +118,13 @@ const { data, page, pages } = Astro.props;
     );
   });
 
+  let selectedTransactions: string[] = JSON.parse(
+    localStorage.getItem("selectedTransactions") || "[]"
+  );
   for (let row of $tableRows) {
+    if (selectedTransactions.includes(row.id)) {
+      row.classList.add("bg-main/15");
+    }
     row.addEventListener("click", () => {
       let selectedTransactions: string[] = JSON.parse(
         localStorage.getItem("selectedTransactions") || "[]"
