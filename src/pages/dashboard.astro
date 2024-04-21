@@ -25,7 +25,7 @@ import {
   deleteDebt,
 } from "../controllers/debtController";
 import type { Group } from "../models/group";
-import { getUserGroups } from "../controllers/groupController";
+import { addTransactions, getUserGroups } from "../controllers/groupController";
 
 if (!Astro.cookies.has("token")) {
   return Astro.redirect("/login");
@@ -149,6 +149,29 @@ if (Astro.request.method === "POST") {
     const debtAction = data.get("debtAction") as string;
     const debtDescription = data.get("debtDescription") as string;
     const debtAmount = +(data.get("debtAmount") || 0);
+    const groupId = data.get("groupId") as string;
+    const groupAction = data.get("groupAction") as string;
+    const groupTransactions = data.get("groupTransactions") as string;
+
+    if (groupId && groupTransactions && groupAction === "add") {
+      const transactionIds = groupTransactions.split(",");
+      const response = await addTransactions(
+        token || "",
+        groupId,
+        transactionIds
+      );
+      const decoded = (await response.json()) as DefaultResponse;
+
+      if (decoded.status === 401) {
+        return Astro.redirect("/logout");
+      }
+
+      if (decoded.message === "error") {
+        console.error(decoded.data);
+        error = decoded.data;
+      }
+      //TODO: show notification if success
+    }
 
     if (debtDescription && debtName && debtAmount) {
       const newDebt: Debt = {
@@ -241,6 +264,6 @@ if (Astro.request.method === "POST") {
       {groups && groups.map((group) => <GroupCard group={group} />)}
       <GroupCard isNew={true} />
     </CardsSection>
-    <Table data={transactions} page={page} pages={pages} />
+    <Table groups={groups} data={transactions} page={page} pages={pages} />
   </div>
 </Layout>

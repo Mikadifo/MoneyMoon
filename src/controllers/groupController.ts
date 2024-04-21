@@ -8,3 +8,17 @@ export const getUserGroups = (token: string): Promise<Response> => {
     },
   });
 };
+
+export const addTransactions = (
+  token: string,
+  groupId: string,
+  transactions: string[]
+): Promise<Response> => {
+  return fetch(`${BASE_URL}/groups/add/${groupId}`, {
+    method: "PUT",
+    headers: {
+      "access-token": token,
+    },
+    body: JSON.stringify(transactions),
+  });
+};

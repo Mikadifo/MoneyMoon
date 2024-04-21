@@ -1,5 +1,8 @@
 ---
+import type { Group } from "../models/group";
+
 export interface Props {
+  groups: Group[];
   data: any[];
   page: number;
   pages: number;
@@ -7,17 +10,26 @@ export interface Props {
 
 const HEAD_ELEMENTS = ["Date", "Type", "Description", "Amount", "Balance"];
 
-const { data, page, pages } = Astro.props;
+const { groups, data, page, pages } = Astro.props;
 ---
 
 <div class="inline-block xl:mx-auto">
   <div id="selection-controls" class="hidden gap-4 mb-4">
-    <button class="bg-main font-display font-bold text-white px-4 rounded-md"
-      >Add to group</button
-    >
-    <button class="bg-main font-display font-bold text-white px-4 rounded-md">
-      Add to new group</button
-    >
+    {
+      groups.map((group) => (
+        <form class="add-group-form" method="POST">
+          <input type="hidden" name="groupId" value={group.id} />
+          <input type="hidden" name="groupAction" value="add" />
+          <button
+            type="submit"
+            class="bg-main font-display font-bold text-white px-4 rounded-md"
+          >
+            Add to
+            <span>{group.name}</span>
+          </button>
+        </form>
+      ))
+    }
     <button
       id="cancel-selection"
       class="bg-black/30 font-display font-bold text-black px-4 rounded-md"
@@ -117,6 +129,7 @@ const { data, page, pages } = Astro.props;
   const $tableRows = document.getElementsByClassName("table-row");
   const $selectionControls = document.getElementById("selection-controls");
   const $cancelSelectionButton = document.getElementById("cancel-selection");
+  const $addGroupForms = document.getElementsByClassName("add-group-form");
 
   let selectedTransactions: string[] = JSON.parse(
     localStorage.getItem("selectedTransactions") || "[]"
@@ -196,6 +209,31 @@ const { data, page, pages } = Astro.props;
       );
 
       console.log(selectedTransactions);
+    });
+  }
+
+  for (let form of $addGroupForms) {
+    form.addEventListener("submit", (evt) => {
+      const isOk = confirm(
+        "Selected transactions will be added to this group. Continue?"
+      );
+      if (isOk) {
+        const target = evt.target as HTMLFormElement;
+        const $input = document.createElement("input");
+        let selectedTransactions: string[] = JSON.parse(
+          localStorage.getItem("selectedTransactions") || "[]"
+        );
+
+        $input.setAttribute("type", "hidden");
+        $input.setAttribute("name", "groupTransactions");
+        $input.setAttribute("value", selectedTransactions.join(","));
+
+        target.appendChild($input);
+
+        localStorage.setItem("selectedTransactions", "[]");
+      } else {
+        evt.preventDefault();
+      }
     });
   }
 </script>
