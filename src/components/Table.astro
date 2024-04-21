@@ -29,7 +29,7 @@ const { data, page, pages } = Astro.props;
       <tbody class="font-body text-xl">
         {
           data.map((row) => (
-            <tr>
+            <tr id={row.id} class="table-row hover:bg-black/10 cursor-pointer">
               <td scope="row" class="px-4 py-4 whitespace-nowrap">
                 {row.date}
               </td>
@@ -100,6 +100,7 @@ const { data, page, pages } = Astro.props;
   ) as HTMLInputElement;
   const $nextPageButton = document.getElementById("next-page-button");
   const $previousPageButton = document.getElementById("previous-page-button");
+  const $tableRows = document.getElementsByClassName("table-row");
 
   $nextPageButton?.addEventListener("click", (evt) => {
     evt.preventDefault();
@@ -116,4 +117,29 @@ const { data, page, pages } = Astro.props;
       window.location.pathname + "?page=" + (+previousPage - 1)
     );
   });
+
+  for (let row of $tableRows) {
+    row.addEventListener("click", () => {
+      let selectedTransactions: string[] = JSON.parse(
+        localStorage.getItem("selectedTransactions") || "[]"
+      );
+
+      if (!selectedTransactions.includes(row.id)) {
+        selectedTransactions.push(row.id);
+        row.classList.add("bg-main/15");
+      } else {
+        selectedTransactions = selectedTransactions.filter(
+          (transaction) => transaction !== row.id
+        );
+        row.classList.remove("bg-main/15");
+      }
+
+      localStorage.setItem(
+        "selectedTransactions",
+        JSON.stringify(selectedTransactions)
+      );
+
+      console.log(selectedTransactions);
+    });
+  }
 </script>
