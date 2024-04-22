@@ -16,7 +16,7 @@ const { groups, data, page, pages } = Astro.props;
 <div class="inline-block xl:mx-auto">
   <div id="selection-controls" class="hidden gap-4 mb-4">
     {
-      groups.map((group) => (
+      groups?.map((group) => (
         <form class="add-group-form" method="POST">
           <input type="hidden" name="groupId" value={group.id} />
           <input type="hidden" name="groupAction" value="add" />
