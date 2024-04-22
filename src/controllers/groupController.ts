@@ -1,5 +1,18 @@
 const BASE_URL = (await import.meta.env.PUBLIC_API_URL) as string;
 
+export const createGroup = (token: string, name: string): Promise<Response> => {
+  return fetch(`${BASE_URL}/groups`, {
+    method: "POST",
+    headers: {
+      "access-token": token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name,
+    }),
+  });
+};
+
 export const getUserGroups = (token: string): Promise<Response> => {
   return fetch(`${BASE_URL}/groups`, {
     method: "GET",

@@ -8,6 +8,7 @@ import Table from "../components/Table.astro";
 import Header from "../components/Header.astro";
 import type { Bank } from "../models/bank";
 import type { Debt } from "../models/debt";
+import type { Group } from "../models/group";
 import type { Transaction } from "../models/transaction";
 import { csvToTransactions } from "../utils/csvParser";
 import {
@@ -24,8 +25,11 @@ import {
   createDebt,
   deleteDebt,
 } from "../controllers/debtController";
-import type { Group } from "../models/group";
-import { addTransactions, getUserGroups } from "../controllers/groupController";
+import {
+  addTransactions,
+  getUserGroups,
+  createGroup,
+} from "../controllers/groupController";
 
 if (!Astro.cookies.has("token")) {
   return Astro.redirect("/login");
@@ -152,6 +156,21 @@ if (Astro.request.method === "POST") {
     const groupId = data.get("groupId") as string;
     const groupAction = data.get("groupAction") as string;
     const groupTransactions = data.get("groupTransactions") as string;
+    const groupName = data.get("groupName") as string;
+
+    if (groupName) {
+      const response = await createGroup(token || "", groupName);
+      const decoded = (await response.json()) as DefaultResponse;
+
+      if (decoded.status === 401) {
+        return Astro.redirect("/logout");
+      }
+
+      if (decoded.message === "error") {
+        console.error(decoded.data);
+        error = decoded.data;
+      }
+    }
 
     if (groupId && groupTransactions && groupAction === "add") {
       const transactionIds = groupTransactions.split(",");
