@@ -313,9 +313,10 @@ try {
     <CardsSection title="Balances">
       <BalanceCard amount={balance} label="Bank Balance" />
       {
-        groups.map(({ name, total }) => (
-          <BalanceCard amount={balance - total} label={`Bank - ${name}`} />
-        ))
+        groups &&
+          groups.map(({ name, total }) => (
+            <BalanceCard amount={balance - total} label={`Bank - ${name}`} />
+          ))
       }
     </CardsSection>
     <CardsSection title="Debts">
