@@ -15,6 +15,23 @@ export const getUserTransactions = (
   });
 };
 
+export const searchTransactions = (
+  token: string,
+  bankId: string,
+  search: string,
+  page: number = 1
+): Promise<Response> => {
+  return fetch(
+    `${BASE_URL}/transactions/find/?search=${search}&bankId=${bankId}&page=${page}`,
+    {
+      method: "GET",
+      headers: {
+        "access-token": token,
+      },
+    }
+  );
+};
+
 export const createTransactions = (
   token: string,
   transactions: Transaction[]

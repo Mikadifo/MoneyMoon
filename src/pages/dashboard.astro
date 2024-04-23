@@ -4,6 +4,7 @@ import MoneyCard from "../components/MoneyCard.astro";
 import GroupCard from "../components/GroupCard.astro";
 import BalanceCard from "../components/BalanceCard.astro";
 import CardsSection from "../components/CardsSection.astro";
+import Search from "../components/Search.astro";
 import Table from "../components/Table.astro";
 import Header from "../components/Header.astro";
 import type { Bank } from "../models/bank";
@@ -14,6 +15,7 @@ import { csvToTransactions } from "../utils/csvParser";
 import {
   createTransactions,
   getUserTransactions,
+  searchTransactions,
 } from "../controllers/transactionController";
 import {
   getUserBanks,
@@ -288,6 +290,9 @@ if (Astro.request.method === "POST") {
       {groups && groups.map((group) => <GroupCard group={group} />)}
       <GroupCard isNew={true} />
     </CardsSection>
-    <Table groups={groups} data={transactions} page={page} pages={pages} />
+    <div class="inline-block xl:mx-auto">
+      <Search />
+      <Table groups={groups} data={transactions} page={page} pages={pages} />
+    </div>
   </div>
 </Layout>
