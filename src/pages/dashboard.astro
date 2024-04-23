@@ -167,6 +167,21 @@ const fetchGroups = async () => {
   }
 };
 
+try {
+  await fetchBanks();
+  await fetchDebts();
+  if (searchQuery) {
+    await fetchFilteredTransactions();
+  } else {
+    await fetchTransactions();
+  }
+  await fetchGroups();
+} catch (error) {
+  if (error instanceof Error) {
+    console.error(error.message, "ERROR");
+  }
+}
+
 if (Astro.request.method === "POST") {
   try {
     const data = await Astro.request.formData();
@@ -288,21 +303,6 @@ if (Astro.request.method === "POST") {
     }
   } finally {
     return Astro.redirect("/dashboard");
-  }
-}
-
-try {
-  await fetchBanks();
-  await fetchDebts();
-  if (searchQuery) {
-    await fetchFilteredTransactions();
-  } else {
-    await fetchTransactions();
-  }
-  await fetchGroups();
-} catch (error) {
-  if (error instanceof Error) {
-    console.error(error.message, "ERROR");
   }
 }
 ---
