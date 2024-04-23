@@ -6,11 +6,12 @@ export interface Props {
   data: any[];
   page: number;
   pages: number;
+  query: string;
 }
 
 const HEAD_ELEMENTS = ["Date", "Type", "Description", "Amount", "Balance"];
 
-const { groups, data, page, pages } = Astro.props;
+const { groups, data, page, pages, query } = Astro.props;
 ---
 
 <div>
@@ -84,6 +85,7 @@ const { groups, data, page, pages } = Astro.props;
     method="GET"
     class="mt-4 me-8 flex justify-end items-center text-xl font-body"
   >
+    <input type="hidden" id="search-query" name="searchQuery" value={query} />
     {
       page > 1 && (
         <button
@@ -130,6 +132,9 @@ const { groups, data, page, pages } = Astro.props;
   const $selectionControls = document.getElementById("selection-controls");
   const $cancelSelectionButton = document.getElementById("cancel-selection");
   const $addGroupForms = document.getElementsByClassName("add-group-form");
+  const $searchQuery = document.getElementById(
+    "search-query"
+  ) as HTMLInputElement;
 
   let selectedTransactions: string[] = JSON.parse(
     localStorage.getItem("selectedTransactions") || "[]"
@@ -163,7 +168,11 @@ const { groups, data, page, pages } = Astro.props;
     evt.preventDefault();
     const nextPage = $pageNumber.value;
     window.location.assign(
-      window.location.pathname + "?page=" + (+nextPage + 1)
+      window.location.pathname +
+        "?page=" +
+        (+nextPage + 1) +
+        "&searchQuery=" +
+        $searchQuery.value
     );
   });
 
@@ -171,7 +180,11 @@ const { groups, data, page, pages } = Astro.props;
     evt.preventDefault();
     const previousPage = $pageNumber.value;
     window.location.assign(
-      window.location.pathname + "?page=" + (+previousPage - 1)
+      window.location.pathname +
+        "?page=" +
+        (+previousPage - 1) +
+        "&searchQuery=" +
+        $searchQuery.value
     );
   });
 

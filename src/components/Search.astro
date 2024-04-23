@@ -1,7 +1,18 @@
-<form class="mb-4 flex text-lg">
+---
+export interface Props {
+  query: string;
+}
+
+const { query } = Astro.props;
+---
+
+<form class="mb-4 flex text-lg" method="GET">
   <input
     type="text"
     placeholder="Search transactions"
+    value={query}
+    name="searchQuery"
+    required={query === "" ? true : false}
     class="w-full border border-black rounded-lg px-4 py-2 font-body text-black"
   />
   <button

@@ -47,10 +47,17 @@ let groups: Group[] = [];
 let balance = +(Astro.cookies.get("balance")?.value || 0);
 let page = 1;
 let pages = 1;
+let searchQuery = "";
 let error: string = "";
 
 if (Astro.request.method === "GET") {
   const pageNumber = Astro.url.searchParams.get("page") || "";
+  const searchParam = Astro.url.searchParams.get("searchQuery") || "";
+
+  if (searchParam) {
+    searchQuery = searchParam;
+  }
+
   if (pageNumber) {
     page = +pageNumber;
   }
@@ -94,6 +101,31 @@ const fetchDebts = async () => {
   }
 };
 
+const fetchFilteredTransactions = async () => {
+  const response = await searchTransactions(
+    token || "",
+    bankId,
+    searchQuery,
+    page
+  );
+  const decoded = (await response.json()) as DefaultResponse;
+
+  if (decoded.status === 401) {
+    return Astro.redirect("/logout");
+  }
+
+  if (decoded.message === "error") {
+    console.error(decoded.data);
+    error = decoded.data;
+  }
+
+  if (decoded.message === "success") {
+    transactions = decoded.data.transactions;
+    page = decoded.data.paginator.page;
+    pages = decoded.data.paginator.pages;
+  }
+};
+
 const fetchTransactions = async () => {
   const response = await getUserTransactions(token || "", bankId, page);
   const decoded = (await response.json()) as DefaultResponse;
@@ -134,17 +166,6 @@ const fetchGroups = async () => {
     groups = decoded.data;
   }
 };
-
-try {
-  await fetchBanks();
-  await fetchDebts();
-  await fetchTransactions();
-  await fetchGroups();
-} catch (error) {
-  if (error instanceof Error) {
-    console.error(error.message, "ERROR");
-  }
-}
 
 if (Astro.request.method === "POST") {
   try {
@@ -269,6 +290,21 @@ if (Astro.request.method === "POST") {
     return Astro.redirect("/dashboard");
   }
 }
+
+try {
+  await fetchBanks();
+  await fetchDebts();
+  if (searchQuery) {
+    await fetchFilteredTransactions();
+  } else {
+    await fetchTransactions();
+  }
+  await fetchGroups();
+} catch (error) {
+  if (error instanceof Error) {
+    console.error(error.message, "ERROR");
+  }
+}
 ---
 
 <Layout title="Dashboard | Money moon">
@@ -291,8 +327,14 @@ if (Astro.request.method === "POST") {
       <GroupCard isNew={true} />
     </CardsSection>
     <div class="inline-block xl:mx-auto">
-      <Search />
-      <Table groups={groups} data={transactions} page={page} pages={pages} />
+      <Search query={searchQuery} />
+      <Table
+        groups={groups}
+        data={transactions}
+        page={page}
+        pages={pages}
+        query={searchQuery}
+      />
     </div>
   </div>
 </Layout>
