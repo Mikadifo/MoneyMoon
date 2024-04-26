@@ -1,10 +1,4 @@
 ---
-import type { Group } from "../models/group";
-
-interface Props {
-  group?: Group;
-}
-
 const HEAD_ELEMENTS = [
   "Date",
   "Type",
@@ -13,8 +7,6 @@ const HEAD_ELEMENTS = [
   "Balance",
   "Actions",
 ];
-
-const { group } = Astro.props;
 ---
 
 <dialog
@@ -22,7 +14,7 @@ const { group } = Astro.props;
   class="absolute backdrop:bg-black/70 backdrop:backdrop-blur-sm rounded-2xl bg-white"
 >
   <div class="relative text-black py-12 px-24">
-    <h1 class="font-bold font-display text-[64px]">{group?.name}</h1>
+    <h1 class="font-bold font-display text-[64px]">Loading...</h1>
     <div class="mt-8 mb-4">
       <h4 class="font-display font-bold text-xl">Transactions:</h4>
     </div>
@@ -38,43 +30,7 @@ const { group } = Astro.props;
           }
         </tr>
       </thead>
-      <tbody class="font-body text-xl">
-        {
-          group?.transactions.map((row) => (
-            <tr class="hover:bg-black/10 cursor-pointer">
-              <td scope="row" class="px-4 py-4 whitespace-nowrap">
-                {row.date}
-              </td>
-              <td scope="row" class="px-4 py-4 whitespace-nowrap">
-                {row.type}
-              </td>
-              <td scope="row" class="px-4 py-4 whitespace-nowrap">
-                {row.description}
-              </td>
-              <td
-                scope="row"
-                class={`px-5 py-4 whitespace-nowrap ${row.amount > 0 ? "text-success" : "text-error"}`}
-              >
-                $ {row.amount}
-              </td>
-              <td scope="row" class="px-4 py-4 whitespace-nowrap">
-                $ {row.balance}
-              </td>
-              <td scope="row" class="px-4 py-4 whitespace-nowrap">
-                <form method="POST" class="delete-transaction-form">
-                  <input type="hidden" value={row.id} name="transactionId" />
-                  <button
-                    type="submit"
-                    class="w-full py-1 bg-error rounded-lg font-bold font-display text-base text-white hover:opacity-75"
-                  >
-                    Delete
-                  </button>
-                </form>
-              </td>
-            </tr>
-          ))
-        }
-      </tbody>
+      <tbody class="font-body text-xl"> </tbody>
     </table>
     <button
       id="edit-group-close-button"
@@ -86,6 +42,8 @@ const { group } = Astro.props;
 </dialog>
 
 <script>
+  import type { DefaultResponse } from "../controllers/userController";
+  import { deleteTransaction } from "./../controllers/groupController";
   const $cardDialog = document.getElementById(
     "edit-group-dialog"
   ) as HTMLDialogElement;
@@ -96,15 +54,36 @@ const { group } = Astro.props;
 
   $closeButton!.addEventListener("click", () => $cardDialog.close());
   for (let form of $deleteTransactionForms) {
-    form.addEventListener("submit", (evt) => {
+    form.addEventListener("submit", async (evt) => {
       evt.preventDefault();
 
       const isOk = confirm("Are you sure to delete this transanction?");
       if (isOk) {
         const data = new FormData(evt.target);
         const transactionId = data.get("transactionId");
-        console.log(transactionId);
-        //TODO: delte trans here
+        const groupId = data.get("groupId");
+        const token = data.get("token");
+        const response = await deleteTransaction(
+          token || "",
+          groupId,
+          transactionId
+        );
+        const decoded = (await response.json()) as DefaultResponse;
+        console.log(window.location);
+
+        if (decoded.status === 401) {
+          console.log(window.location);
+          //window.location.assign(
+        }
+
+        if (decoded.message === "error") {
+          console.error(decoded.data);
+        }
+
+        if (decoded.message === "success") {
+          //TODO: delte from array
+          console.error(decoded.data);
+        }
       }
     });
   }

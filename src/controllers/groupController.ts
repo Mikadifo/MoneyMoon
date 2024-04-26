@@ -47,3 +47,19 @@ export const getGroupTransactions = (
     },
   });
 };
+
+export const deleteTransaction = (
+  token: string,
+  groupId: string,
+  transactionId: string
+): Promise<Response> => {
+  return fetch(`${BASE_URL}/groups/delete/${groupId}`, {
+    method: "PUT",
+    headers: {
+      "access-token": token,
+    },
+    body: JSON.stringify({
+      transactionId,
+    }),
+  });
+};

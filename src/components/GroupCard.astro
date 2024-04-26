@@ -1,23 +1,22 @@
 ---
-import AddGroupDialog from "./AddGroupDialog.astro";
-import EditGroupDialog from "./EditGroupDialog.astro";
 import type { Group } from "../models/group";
 
 interface Props {
   group?: Group;
   isNew?: boolean;
+  token?: string;
 }
 
-const { group, isNew } = Astro.props;
+const { group, isNew, token } = Astro.props;
 ---
 
-<>
-  <AddGroupDialog />
-  <EditGroupDialog group={group} />
+<form method="POST" class={`${isNew ? "" : "group-card-form"}`}>
+  <input type="hidden" name="groupIdDialog" value={group?.id} />
+  <input type="hidden" name="token" value={token} />
   <button
-    type="button"
+    type="submit"
     id={isNew ? "new-group-button" : ""}
-    class={`${isNew ? "" : "group-card-button"} transition ease-in-out duration-300 bg-black text-white rounded-2xl cursor-default flex items-center hover:cursor-pointer hover:scale-110`}
+    class="transition ease-in-out duration-300 bg-black text-white rounded-2xl cursor-default flex items-center hover:cursor-pointer hover:scale-110"
   >
     {
       isNew ? (
@@ -32,9 +31,12 @@ const { group, isNew } = Astro.props;
       )
     }
   </button>
-</>
+</form>
 
 <script>
+  import { getGroupTransactions } from "../controllers/groupController";
+  import type { DefaultResponse } from "../controllers/userController";
+
   const $addGroupDialog = document.getElementById(
     "group-dialog"
   ) as HTMLDialogElement;
@@ -42,11 +44,81 @@ const { group, isNew } = Astro.props;
     "edit-group-dialog"
   ) as HTMLDialogElement;
   const $newGroupButton = document.getElementById("new-group-button");
-  const $editGroupButtons =
-    document.getElementsByClassName("group-card-button");
+  const $editGroupForms = document.getElementsByClassName("group-card-form");
 
-  $newGroupButton?.addEventListener("click", () => $addGroupDialog.showModal());
-  for (let button of $editGroupButtons) {
-    button.addEventListener("click", () => $editGroupDialog.showModal());
+  $newGroupButton?.addEventListener("click", (evt) => {
+    evt.preventDefault();
+    $addGroupDialog.showModal();
+  });
+
+  for (let form of $editGroupForms) {
+    form.addEventListener("submit", async (evt) => {
+      evt.preventDefault();
+
+      const data = new FormData(evt.target);
+      const groupIdDialog = data.get("groupIdDialog") as string;
+      const token = data.get("token") as string;
+
+      const fetchGroupTransactions = async () => {
+        const response = await getGroupTransactions(token || "", groupIdDialog);
+        const decoded = (await response.json()) as DefaultResponse;
+
+        if (decoded.status === 401) {
+          console.log(window.location);
+          //window.location.assign(
+        }
+
+        if (decoded.message === "error") {
+          console.error(decoded.data);
+        }
+
+        if (decoded.message === "success") {
+          {
+            //TODO: cors in go gin does not allow to make this 2 calls
+            /*
+          group?.transactions.map((row) => (
+            <tr class="hover:bg-black/10 cursor-pointer">
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
+                {row.date}
+              </td>
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
+                {row.type}
+              </td>
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
+                {row.description}
+              </td>
+              <td
+                scope="row"
+                class={`px-5 py-4 whitespace-nowrap ${row.amount > 0 ? "text-success" : "text-error"}`}
+              >
+                $ {row.amount}
+              </td>
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
+                $ {row.balance}
+              </td>
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
+                <form method="POST" class="delete-transaction-form">
+                  <input type="hidden" value={row.id} name="transactionId" />
+                  <input type="hidden" value={group.id} name="transactionId" />
+                  <input type="hidden" value={token} name="transactionId" />
+                  <button
+                    type="submit"
+                    class="w-full py-1 bg-error rounded-lg font-bold font-display text-base text-white hover:opacity-75"
+                  >
+                    Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+          ))
+	  */
+          }
+
+          $editGroupDialog.showModal();
+        }
+      };
+
+      await fetchGroupTransactions();
+    });
   }
 </script>
