@@ -35,3 +35,15 @@ export const addTransactions = (
     body: JSON.stringify(transactions),
   });
 };
+
+export const getGroupTransactions = (
+  token: string,
+  groupId: string
+): Promise<Response> => {
+  return fetch(`${BASE_URL}/groups/${groupId}`, {
+    method: "GET",
+    headers: {
+      "access-token": token,
+    },
+  });
+};

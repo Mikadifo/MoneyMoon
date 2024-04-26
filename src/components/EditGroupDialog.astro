@@ -1,0 +1,111 @@
+---
+import type { Group } from "../models/group";
+
+interface Props {
+  group?: Group;
+}
+
+const HEAD_ELEMENTS = [
+  "Date",
+  "Type",
+  "Description",
+  "Amount",
+  "Balance",
+  "Actions",
+];
+
+const { group } = Astro.props;
+---
+
+<dialog
+  id="edit-group-dialog"
+  class="absolute backdrop:bg-black/70 backdrop:backdrop-blur-sm rounded-2xl bg-white"
+>
+  <div class="relative text-black py-12 px-24">
+    <h1 class="font-bold font-display text-[64px]">{group?.name}</h1>
+    <div class="mt-8 mb-4">
+      <h4 class="font-display font-bold text-xl">Transactions:</h4>
+    </div>
+    <table id="edit-group-table" class="text-left text-black">
+      <thead class="font-bold font-display text-xl uppercase">
+        <tr>
+          {
+            HEAD_ELEMENTS.map((element) => (
+              <th scope="col" class="px-4 py-4">
+                {element}
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody class="font-body text-xl">
+        {
+          group?.transactions.map((row) => (
+            <tr class="hover:bg-black/10 cursor-pointer">
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
+                {row.date}
+              </td>
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
+                {row.type}
+              </td>
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
+                {row.description}
+              </td>
+              <td
+                scope="row"
+                class={`px-5 py-4 whitespace-nowrap ${row.amount > 0 ? "text-success" : "text-error"}`}
+              >
+                $ {row.amount}
+              </td>
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
+                $ {row.balance}
+              </td>
+              <td scope="row" class="px-4 py-4 whitespace-nowrap">
+                <form method="POST" class="delete-transaction-form">
+                  <input type="hidden" value={row.id} name="transactionId" />
+                  <button
+                    type="submit"
+                    class="w-full py-1 bg-error rounded-lg font-bold font-display text-base text-white hover:opacity-75"
+                  >
+                    Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+    <button
+      id="edit-group-close-button"
+      type="button"
+      class="w-full py-2 bg-black/10 rounded-lg font-bold font-display text-[26px] mt-4 hover:opacity-75"
+      >Close</button
+    >
+  </div>
+</dialog>
+
+<script>
+  const $cardDialog = document.getElementById(
+    "edit-group-dialog"
+  ) as HTMLDialogElement;
+  const $closeButton = document.getElementById("edit-group-close-button");
+  const $deleteTransactionForms = document.getElementsByClassName(
+    "delete-transaction-form"
+  );
+
+  $closeButton!.addEventListener("click", () => $cardDialog.close());
+  for (let form of $deleteTransactionForms) {
+    form.addEventListener("submit", (evt) => {
+      evt.preventDefault();
+
+      const isOk = confirm("Are you sure to delete this transanction?");
+      if (isOk) {
+        const data = new FormData(evt.target);
+        const transactionId = data.get("transactionId");
+        console.log(transactionId);
+        //TODO: delte trans here
+      }
+    });
+  }
+</script>

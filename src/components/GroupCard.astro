@@ -1,5 +1,6 @@
 ---
-import GroupDialog from "./GroupDialog.astro";
+import AddGroupDialog from "./AddGroupDialog.astro";
+import EditGroupDialog from "./EditGroupDialog.astro";
 import type { Group } from "../models/group";
 
 interface Props {
@@ -11,7 +12,8 @@ const { group, isNew } = Astro.props;
 ---
 
 <>
-  <GroupDialog />
+  <AddGroupDialog />
+  <EditGroupDialog group={group} />
   <button
     type="button"
     id={isNew ? "new-group-button" : ""}
@@ -33,11 +35,18 @@ const { group, isNew } = Astro.props;
 </>
 
 <script>
-  const $groupDialog = document.getElementById(
+  const $addGroupDialog = document.getElementById(
     "group-dialog"
   ) as HTMLDialogElement;
+  const $editGroupDialog = document.getElementById(
+    "edit-group-dialog"
+  ) as HTMLDialogElement;
   const $newGroupButton = document.getElementById("new-group-button");
-  const $editGroupButton = document.getElementById("group-card-button");
+  const $editGroupButtons =
+    document.getElementsByClassName("group-card-button");
 
-  $newGroupButton?.addEventListener("click", () => $groupDialog.showModal());
+  $newGroupButton?.addEventListener("click", () => $addGroupDialog.showModal());
+  for (let button of $editGroupButtons) {
+    button.addEventListener("click", () => $editGroupDialog.showModal());
+  }
 </script>

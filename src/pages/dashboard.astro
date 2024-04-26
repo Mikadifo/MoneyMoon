@@ -31,6 +31,7 @@ import {
   addTransactions,
   getUserGroups,
   createGroup,
+  getGroupTransactions,
 } from "../controllers/groupController";
 
 if (!Astro.cookies.has("token")) {
@@ -167,6 +168,26 @@ const fetchGroups = async () => {
   }
 };
 
+const fetchGroupTransaction = async () => {
+  for (let group of groups) {
+    const response = await getGroupTransactions(token || "", group.id);
+    const decoded = (await response.json()) as DefaultResponse;
+
+    if (decoded.status === 401) {
+      return Astro.redirect("/logout");
+    }
+
+    if (decoded.message === "error") {
+      console.error(decoded.data);
+      error = decoded.data;
+    }
+
+    if (decoded.message === "success") {
+      group.transactions = decoded.data;
+    }
+  }
+};
+
 try {
   await fetchBanks();
   await fetchDebts();
@@ -176,6 +197,7 @@ try {
     await fetchTransactions();
   }
   await fetchGroups();
+  await fetchGroupTransaction();
 } catch (error) {
   if (error instanceof Error) {
     console.error(error.message, "ERROR");
