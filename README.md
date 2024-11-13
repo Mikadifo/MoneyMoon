@@ -26,6 +26,9 @@ https://github.com/user-attachments/assets/681ef498-9d55-43c6-9855-1662e6f232eb
 
 ![Screenshot 2024-11-13 145226](https://github.com/user-attachments/assets/4cd311ed-1c86-4b0f-8118-030d46b2fa99)
 
+## Figma Design
+https://www.figma.com/design/RJl9RON0njFQxeF8a3FXUR/MoneyMoon?node-id=0-1&t=pUjvcTyPH90qrkVq-1
+
 ## Commands
 
 All commands are run from the root of the project, from a terminal:
